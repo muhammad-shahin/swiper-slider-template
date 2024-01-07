@@ -1,0 +1,42 @@
+<div className='overflow-hidden absolute top-0 left-0 min-w-full h-full z-[100]'>
+            <div
+              className='flex duration-300 min-w-full h-full'
+              style={{ transform: `translateX(-${0 * 100}%)` }}
+            >
+              {/* content slide 1 */}
+              <div className='min-w-full flex flex-col justify-between z-[-1000]'>
+                {/* sub heading & heading */}
+                <div className='max-w-[450px] relative'>
+                  <p className='text-base font-medium open'>Brand Design</p>
+                  <h2 className='text-5xl font-bold text-[#252E31]'>
+                    Fashion B&E logo branding.
+                  </h2>
+                </div>
+                {/* slider count & quote card */}
+                <div className='flex justify-between items-end mb-4'>
+                  <p className='font-bold text-3xl text-[#253029]'>
+                    02/<span className='text-2xl'>03</span>
+                  </p>
+
+                  {/* quote card */}
+                  <div className='p-6 rounded-lg shadow-xl bg-white max-w-[448px] flex justify-start items-center gap-4 z-[12]'>
+                    <div>
+                      <img
+                        src='https://i.pravatar.cc/80?img=52'
+                        className='rounded-full object-cover'
+                      />
+                    </div>
+                    <div>
+                      <p className='text-lg font-medium open'>
+                        ”Simplicity that echoes, a memorable brand identity
+                        representation.”
+                      </p>
+                      <p className='font-semibold text-xl text-[#253029]'>
+                        - Albert Flores
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>

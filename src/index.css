@@ -2,12 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&family=Playfair+Display+SC:wght@400;700;900&display=swap');
 
-body {
-  font-family: 'Playfair Display', serif;
-  margin: 0;
-  padding: 0;
+* {
+  font-family: 'Playfair Display SC';
+}
+.open {
+  font-family: 'Open Sans', sans-serif;
+  color: #505253;
 }
 .swiper-slide {
   border-radius: 24px;
