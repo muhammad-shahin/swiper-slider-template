@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
+
+body {
+  font-family: 'Playfair Display', serif;
+  margin: 0;
+  padding: 0;
+}
+.swiper-slide {
+  border-radius: 24px;
+}
+.swiper-slide-visible {
+}
+.swiper-slide-fully-visible {
+}
+.swiper-slide-active {
+  transform: translate3d(0px, 0px, 0px) rotateZ(-10deg) scale(1);
+}
+
+.mySwiper {
+}
+
+.nav-next {
+  width: 48px;
+  height: 48px;
+  background-color: black;
+  border-radius: 50%;
+  color: white;
+  font-size: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.nav-prev {
+  width: 48px;
+  height: 48px;
+  background-color: black;
+  border-radius: 50%;
+  color: white;
+  font-size: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
