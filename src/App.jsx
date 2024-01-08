@@ -46,7 +46,7 @@ export default function App() {
           <h1>Project Spotlight Shaping the Future with Azure.</h1>
         </div>
 
-        <div className='content-slider-wrapper'>
+        <div className='slider-wrapper'>
           {/* content slider wrapper */}
           <div className='no-touch'>
             <Swiper
@@ -62,10 +62,35 @@ export default function App() {
             >
               {[1, 2, 3, 4].map((slide, index) => (
                 <SwiperSlide key={index}>
-                  {/* sub heading & heading */}
-                  <div className='sub-heading-and-heading'>
-                    <p className='open'>Brand Design {slide}</p>
-                    <h2>Fashion B&E logo branding {slide}</h2>
+                  <div className='slider-content-wrapper no-touch'>
+                    {/* sub heading & heading */}
+                    <div className='sub-heading-and-heading'>
+                      <p className='open'>Brand Design {slide}</p>
+                      <h2>Fashion B&E logo branding {slide}</h2>
+                    </div>
+
+                    {/* slider counter & review card  */}
+                    <div className='review-card-slider-wrapper'>
+                      <p>
+                        0{slide}/<span>04</span>
+                      </p>
+
+                      {/* review card */}
+                      <div className='review-card'>
+                        <div>
+                          <img src={`https://i.pravatar.cc/80?img=${slide}`} />
+                        </div>
+                        <div>
+                          <p className='review'>
+                            ”Simplicity that echoes, a memorable brand identity
+                            representation.” {slide}
+                          </p>
+                          <p className='reviewer-name'>
+                            - Albert Flores {slide}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </SwiperSlide>
               ))}
@@ -87,7 +112,7 @@ export default function App() {
               effect={'cards'}
               grabCursor={true}
               modules={[EffectCards, Navigation, Autoplay]}
-              className='image-slider'
+              className='image-slider touch'
               cardsEffect={{ rotate: true, perSlideRotate: -10 }}
               navigation={{
                 nextEl: '.nav-next',
@@ -97,6 +122,7 @@ export default function App() {
               onSlideChange={handleImageSliderChange}
               onSwiper={(swiper) => console.log(swiper)}
               initialSlide={currentSlide}
+              allowTouchMove={true}
             >
               {/* image slides */}
               {[1, 2, 3, 4].map((slide, index) => (
@@ -105,46 +131,6 @@ export default function App() {
                     src={`/slider-img-${slide}.jpeg`}
                     className='card-image'
                   />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
-
-          {/* review card slider */}
-          <div className='no-touch'>
-            <Swiper
-              slidesPerView={1}
-              modules={[EffectFade]}
-              effect='fade'
-              fadeEffect={{ crossFade: true }}
-              onSwiper={(swiper) => (cardSwiperRef.current = swiper)}
-              initialSlide={currentSlide}
-              controller={{ control: imageSwiperRef.current }}
-              noSwiping={true}
-              noSwipingClass='no-touch'
-            >
-              {[1, 2, 3, 4].map((slide, index) => (
-                <SwiperSlide key={index}>
-                  {/* slider count & quote card */}
-                  <div className='review-card-slider-wrapper'>
-                    <p>
-                      0{slide}/<span>04</span>
-                    </p>
-
-                    {/* quote card */}
-                    <div className='quote-card'>
-                      <div>
-                        <img src={`https://i.pravatar.cc/80?img=${slide}`} />
-                      </div>
-                      <div>
-                        <p className='quote'>
-                          ”Simplicity that echoes, a memorable brand identity
-                          representation.” {slide}
-                        </p>
-                        <p className='author-name'>- Albert Flores {slide}</p>
-                      </div>
-                    </div>
-                  </div>
                 </SwiperSlide>
               ))}
             </Swiper>

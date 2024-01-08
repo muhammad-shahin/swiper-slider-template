@@ -46,15 +46,22 @@ Swiper image card slider custom navigation button
   align-items: center;
   position: absolute;
   top: 50%;
-  transform: translateY(-50%), rotate(-180deg);
   z-index: 15;
 }
 .nav-prev {
-  transform: rotate(-180deg);
+  transform: translateY(-50%) rotate(180deg);
 }
 .nav-next {
   right: 0;
   transform: translateY(-50%);
+}
+@media (max-width: 1024px) {
+  .nav-next,
+  .nav-prev {
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+  }
 }
 
 /*
@@ -79,19 +86,28 @@ section wrappers
   margin-left: auto;
   margin-right: auto;
 }
+@media (max-width: 560px) {
+  .section-heading > h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+}
 
 /*
 ------------------------
 content slider styles
 ------------------------
  */
-.content-slider-wrapper {
+.slider-wrapper {
   position: relative;
-  min-height: 620px;
+}
+.slider-content-wrapper {
+  width: 100%;
+  min-height: 696px;
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding-top: 60px;
 }
 .sub-heading-and-heading {
   max-width: 450px;
@@ -114,22 +130,26 @@ image card slider styles
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 580px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 3.75rem;
+  pointer-events: auto;
+  max-width: 33.75rem;
 }
 .image-slider {
-  width: 480px;
+  width: 100%;
 }
 .card-image {
-  width: 480px;
-  height: 620px;
-  margin-left: auto;
-  margin-right: auto;
-  object-fit: cover;
-  object-position: top right;
+  width: 100%;
+  /* object-fit: cover;
+  object-position: top right; */
   border-radius: 24px;
+}
+@media (max-width: 560px) {
+  .card-image {
+    max-width: 250px;
+    height: 420px;
+  }
+  .image-slider {
+    max-width: 250px;
+  }
 }
 /*
 ------------------------
@@ -150,10 +170,11 @@ review card slider styles
 .review-card-slider-wrapper > p > span {
   font-size: 1.2rem;
 }
-.quote-card {
+.review-card {
   padding: 1.5rem;
-  border-radius: 16px;
   background-color: white;
+  box-shadow: 8px 8px 25px 0px rgba(63, 60, 60, 0.15);
+  border-radius: 16px;
   max-width: 448px;
   display: flex;
   justify-content: flex-start;
@@ -161,21 +182,28 @@ review card slider styles
   gap: 1rem;
   z-index: 100;
 }
-.quote-card img {
+.review-card img {
   border-radius: 50%;
   object-fit: cover;
 }
-.quote {
+.review {
   font-size: 1.125rem;
   font-weight: 400;
-  font-family: 'Open Sans', sans-serif; /* Assuming 'Open Sans' is the desired font */
+  font-family: 'Open Sans', sans-serif;
 }
-.author-name {
+.reviewer-name {
   font-weight: 600;
   font-size: 1.25rem;
   color: #253029;
 }
 
-.no-touch {
-  pointer-events: none;
+.no-touch * {
+  pointer-events: none !important;
+}
+.touch {
+  pointer-events: auto;
+}
+.touch .nav-prev,
+.touch .nav-next {
+  pointer-events: auto;
 }
