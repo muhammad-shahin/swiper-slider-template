@@ -1,5 +1,6 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { IoIosArrowRoundForward } from 'react-icons/io';
+import PropTypes from 'prop-types';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -9,45 +10,37 @@ import 'swiper/css/autoplay';
 import 'swiper/css/effect-fade';
 
 import { EffectCards, Navigation, Autoplay, EffectFade } from 'swiper/modules';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-export default function App() {
+const App = ({ sliderData }) => {
+  const memoizedSliderData = useMemo(() => {
+    return sliderData;
+  }, [sliderData]);
+
+  const { loopSlider, contentSliderData, imageSliderData } = memoizedSliderData;
+  console.log(memoizedSliderData);
   const [currentSlide, setCurrentSlide] = useState(1);
   const imageSwiperRef = useRef(null);
   const contentSwiperRef = useRef(null);
 
   const handleImageSliderChange = (swiper) => {
-    setCurrentSlide(swiper.activeIndex);
+    if (contentSwiperRef.current) {
+      contentSwiperRef.current.slideTo(swiper.activeIndex);
 
-    // Get the current slide index
-  const activeIndex = swiper.activeIndex;
-    // Trigger the animation manually for the current slide
-  const contentSlider = document.querySelectorAll('.slider-content')[activeIndex];
-  contentSlider.classList.remove('fade-up-animation');
-
-  // Triggering reflow
-  void contentSlider.offsetWidth;
-
-  contentSlider.classList.add('fade-up-animation');
+      // Add fade-up-animation class to all slider content divs
+      const contentSlides = document.querySelectorAll(
+        '.slider-content-wrapper'
+      );
+      contentSlides.forEach((slide, index) => {
+        // Add the class only to the active slide, remove from others
+        if (index === swiper.activeIndex) {
+          slide.classList.add('fade-up-animation');
+        } else {
+          slide.classList.remove('fade-up-animation');
+        }
+      });
+    }
   };
-
-  useEffect(() => {
-    // Add the animation class when the component mounts
-    const contentSlider = document.querySelector('.slider-content');
-    contentSlider.classList.add('fade-up-animation');
-    console.log('Animation class added');
-  }, []);
-  
-
-  useEffect(() => {
-    // When the component mounts or currentSlide changes, go to the initial slide
-    if (imageSwiperRef.current && imageSwiperRef.current.slideTo) {
-      imageSwiperRef.current.slideTo(currentSlide);
-    }
-    if (contentSwiperRef.current && contentSwiperRef.current.slideTo) {
-      contentSwiperRef.current.slideTo(currentSlide);
-    }
-  }, [currentSlide]);
 
   return (
     <section>
@@ -61,15 +54,12 @@ export default function App() {
               effect='fade'
               fadeEffect={{ crossFade: true }}
               onSwiper={(swiper) => (contentSwiperRef.current = swiper)}
-              initialSlide={currentSlide}
-              controller={{ control: imageSwiperRef.current }}
               noSwiping={true}
               noSwipingClass='no-touch'
-              className=''
             >
               {[1, 2, 3, 4].map((slide, index) => (
                 <SwiperSlide key={index}>
-                  <div className='slider-content-wrapper no-touch slider-content fade-up-animation'>
+                  <div className='slider-content-wrapper no-touch slider-content'>
                     {/* sub heading & heading */}
                     <div className='sub-heading-and-heading'>
                       <p className='open'>Brand Design {slide}</p>
@@ -127,10 +117,10 @@ export default function App() {
                 enabled: true,
               }}
               onSlideChange={handleImageSliderChange}
-              onSwiper={(swiper) => console.log(swiper)}
-              initialSlide={currentSlide}
+              onSwiper={(swiper) => (imageSwiperRef.current = swiper)}
               allowTouchMove={true}
-              autoplay={true}
+              autoplay={{ delay: 3000 }}
+              controller={{ control: contentSwiperRef.current }}
             >
               {/* image slides */}
               {[1, 2, 3, 4].map((slide, index) => (
@@ -147,4 +137,10 @@ export default function App() {
       </div>
     </section>
   );
-}
+};
+
+App.propTypes = {
+  sliderData: PropTypes.object,
+};
+
+export default App;

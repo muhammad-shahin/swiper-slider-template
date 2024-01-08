@@ -25,10 +25,6 @@ Swiper Default Class
 .swiper-slide-fully-visible {
 }
 .swiper-slide-active {
-  transform: translate3d(0px, 0px, 0px) rotateZ(-10deg) scale(1);
-}
-.swiper-slide-active .slider-content {
-  animation: fadeUpAnimation 0.5s forwards;
 }
 .fade-up-animation {
   opacity: 0;
