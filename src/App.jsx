@@ -46,9 +46,9 @@ export default function App() {
           <h1>Project Spotlight Shaping the Future with Azure.</h1>
         </div>
 
-        {/* content slider wrapper */}
         <div className='content-slider-wrapper'>
-          <div>
+          {/* content slider wrapper */}
+          <div className='no-touch'>
             <Swiper
               slidesPerView={1}
               modules={[EffectFade]}
@@ -57,6 +57,8 @@ export default function App() {
               onSwiper={(swiper) => (contentSwiperRef.current = swiper)}
               initialSlide={currentSlide}
               controller={{ control: imageSwiperRef.current }}
+              noSwiping={true}
+              noSwipingClass='no-touch'
             >
               {[1, 2, 3, 4].map((slide, index) => (
                 <SwiperSlide key={index}>
@@ -109,7 +111,7 @@ export default function App() {
           </div>
 
           {/* review card slider */}
-          <div>
+          <div className='no-touch'>
             <Swiper
               slidesPerView={1}
               modules={[EffectFade]}
@@ -118,6 +120,8 @@ export default function App() {
               onSwiper={(swiper) => (cardSwiperRef.current = swiper)}
               initialSlide={currentSlide}
               controller={{ control: imageSwiperRef.current }}
+              noSwiping={true}
+              noSwipingClass='no-touch'
             >
               {[1, 2, 3, 4].map((slide, index) => (
                 <SwiperSlide key={index}>
