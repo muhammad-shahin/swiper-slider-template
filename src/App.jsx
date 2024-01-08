@@ -15,15 +15,29 @@ export default function App() {
   const [currentSlide, setCurrentSlide] = useState(1);
   const imageSwiperRef = useRef(null);
   const contentSwiperRef = useRef(null);
-  const cardSwiperRef = useRef(null);
 
   const handleImageSliderChange = (swiper) => {
     setCurrentSlide(swiper.activeIndex);
-    // Manually control the content slider
-    if (contentSwiperRef.current && contentSwiperRef.current.slideTo) {
-      contentSwiperRef.current.slideTo(swiper.activeIndex);
-    }
+
+    // Get the current slide index
+  const activeIndex = swiper.activeIndex;
+    // Trigger the animation manually for the current slide
+  const contentSlider = document.querySelectorAll('.slider-content')[activeIndex];
+  contentSlider.classList.remove('fade-up-animation');
+
+  // Triggering reflow
+  void contentSlider.offsetWidth;
+
+  contentSlider.classList.add('fade-up-animation');
   };
+
+  useEffect(() => {
+    // Add the animation class when the component mounts
+    const contentSlider = document.querySelector('.slider-content');
+    contentSlider.classList.add('fade-up-animation');
+    console.log('Animation class added');
+  }, []);
+  
 
   useEffect(() => {
     // When the component mounts or currentSlide changes, go to the initial slide
@@ -33,19 +47,11 @@ export default function App() {
     if (contentSwiperRef.current && contentSwiperRef.current.slideTo) {
       contentSwiperRef.current.slideTo(currentSlide);
     }
-    if (cardSwiperRef.current && cardSwiperRef.current.slideTo) {
-      cardSwiperRef.current.slideTo(currentSlide);
-    }
   }, [currentSlide]);
 
   return (
     <section>
       <div className='section-wrapper'>
-        {/* slider heading */}
-        {/* <div className='section-heading'>
-          <h1>Project Spotlight Shaping the Future with Azure.</h1>
-        </div> */}
-
         <div className='slider-wrapper'>
           {/* content slider wrapper */}
           <div className='no-touch'>
@@ -59,10 +65,11 @@ export default function App() {
               controller={{ control: imageSwiperRef.current }}
               noSwiping={true}
               noSwipingClass='no-touch'
+              className=''
             >
               {[1, 2, 3, 4].map((slide, index) => (
                 <SwiperSlide key={index}>
-                  <div className='slider-content-wrapper no-touch'>
+                  <div className='slider-content-wrapper no-touch slider-content fade-up-animation'>
                     {/* sub heading & heading */}
                     <div className='sub-heading-and-heading'>
                       <p className='open'>Brand Design {slide}</p>
@@ -123,6 +130,7 @@ export default function App() {
               onSwiper={(swiper) => console.log(swiper)}
               initialSlide={currentSlide}
               allowTouchMove={true}
+              autoplay={true}
             >
               {/* image slides */}
               {[1, 2, 3, 4].map((slide, index) => (
