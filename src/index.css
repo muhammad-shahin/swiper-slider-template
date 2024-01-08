@@ -71,14 +71,12 @@ section wrappers
  */
 .section-wrapper {
   max-width: 1152px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 20px 0;
-  margin-bottom: 1.6rem;
+  margin: 0 auto;
+  padding-top: 120px;
   position: relative;
   background-color: white;
 }
-.section-heading > h1 {
+/* .section-heading > h1 {
   text-align: center;
   font-size: 3.125rem;
   font-weight: bold;
@@ -90,6 +88,11 @@ section wrappers
   .section-heading > h1 {
     font-size: 1.5rem;
     font-weight: 600;
+  }
+} */
+@media (max-width: 1440px) {
+  .section-wrapper {
+    padding-top: 50px;
   }
 }
 
@@ -120,6 +123,31 @@ content slider styles
   font-weight: bold;
   color: #252e31;
 }
+/* responsive styles */
+@media (max-width: 1240px) {
+  .slider-content-wrapper {
+    min-height: 90vh;
+  }
+  .sub-heading-and-heading {
+    max-width: fit-content;
+    margin: 0 auto;
+  }
+  .sub-heading-and-heading > h2 {
+    font-size: 2.5rem;
+    text-align: center;
+  }
+  .sub-heading-and-heading > p {
+    text-align: center;
+  }
+}
+@media (max-width: 767.98px) {
+  .slider-content-wrapper {
+    min-height: 90vh;
+  }
+  .sub-heading-and-heading > h2 {
+    font-size: 1.8rem;
+  }
+}
 /*
 ------------------------
 image card slider styles
@@ -131,25 +159,34 @@ image card slider styles
   left: 50%;
   transform: translate(-50%, -50%);
   pointer-events: auto;
-  max-width: 33.75rem;
 }
 .image-slider {
-  width: 100%;
+  width: 480px;
+  height: 600px;
+}
+@media (max-width: 575.99px) {
+  .image-slider {
+    width: 220px;
+    height: 380px;
+  }
+}
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .image-slider {
+    width: 330px;
+    height: 450px;
+  }
+}
+@media (min-width: 767.99px) and (max-width: 1240px) {
+  .image-slider {
+    width: 380px;
+    height: 500px;
+  }
+}
+@media (max-width: 1240px) {
 }
 .card-image {
-  width: 100%;
-  /* object-fit: cover;
-  object-position: top right; */
   border-radius: 24px;
-}
-@media (max-width: 560px) {
-  .card-image {
-    max-width: 250px;
-    height: 420px;
-  }
-  .image-slider {
-    max-width: 250px;
-  }
+  object-position: center center;
 }
 /*
 ------------------------
@@ -160,7 +197,7 @@ review card slider styles
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-bottom: 0.4rem;
+  margin-bottom: 1rem;
 }
 .review-card-slider-wrapper > p {
   font-weight: bold;
@@ -196,7 +233,34 @@ review card slider styles
   font-size: 1.25rem;
   color: #253029;
 }
+/* responsive styles */
+@media (max-width: 1240px) {
+  .review-card-slider-wrapper {
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  .review-card-slider-wrapper > p {
+    display: none;
+  }
+  .review-card img {
+    width: 48px;
+  }
+  .review-card {
+    padding: 0.8rem;
+    max-width: 380px;
+    gap: 1rem;
+    z-index: 100;
+  }
+  .review {
+    font-size: 0.8rem;
+  }
+  .reviewer-name {
+    font-size: 0.9rem;
+  }
+}
 
+/* others */
 .no-touch * {
   pointer-events: none !important;
 }

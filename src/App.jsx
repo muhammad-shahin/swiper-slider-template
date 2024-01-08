@@ -42,9 +42,9 @@ export default function App() {
     <section>
       <div className='section-wrapper'>
         {/* slider heading */}
-        <div className='section-heading'>
+        {/* <div className='section-heading'>
           <h1>Project Spotlight Shaping the Future with Azure.</h1>
-        </div>
+        </div> */}
 
         <div className='slider-wrapper'>
           {/* content slider wrapper */}
