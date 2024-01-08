@@ -1,16 +1,22 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&family=Playfair+Display+SC:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
 
 * {
-  font-family: 'Playfair Display SC';
+  font-family: 'Playfair Display';
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-transform: none;
 }
 .open {
   font-family: 'Open Sans', sans-serif;
   color: #505253;
 }
+
+/*
+------------------------
+Swiper Default Class
+------------------------
+ */
 .swiper-slide {
   border-radius: 24px;
 }
@@ -22,9 +28,12 @@
   transform: translate3d(0px, 0px, 0px) rotateZ(-10deg) scale(1);
 }
 
-.mySwiper {
-}
-
+/*
+------------------------
+Swiper image card slider custom navigation button
+------------------------
+ */
+.nav-prev,
 .nav-next {
   width: 48px;
   height: 48px;
@@ -35,15 +44,136 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%), rotate(-180deg);
+  z-index: 15;
 }
 .nav-prev {
-  width: 48px;
-  height: 48px;
-  background-color: black;
-  border-radius: 50%;
-  color: white;
-  font-size: 28px;
+  transform: rotate(-180deg);
+}
+.nav-next {
+  right: 0;
+  transform: translateY(-50%);
+}
+
+/*
+------------------------
+section wrappers
+------------------------
+ */
+.section-wrapper {
+  max-width: 1152px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 20px 0;
+  margin-bottom: 1.6rem;
+  position: relative;
+  background-color: white;
+}
+.section-heading > h1 {
+  text-align: center;
+  font-size: 3.125rem;
+  font-weight: bold;
+  max-width: 710px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/*
+------------------------
+content slider styles
+------------------------
+ */
+.content-slider-wrapper {
+  position: relative;
+  min-height: 620px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: 60px;
+}
+.sub-heading-and-heading {
+  max-width: 450px;
+}
+.sub-heading-and-heading > p {
+  font-weight: 500;
+}
+.sub-heading-and-heading > h2 {
+  font-size: 3.125rem;
+  font-weight: bold;
+  color: #252e31;
+}
+/*
+------------------------
+image card slider styles
+------------------------
+ */
+.image-slider-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 580px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 3.75rem;
+}
+.image-slider {
+  width: 480px;
+}
+.card-image {
+  width: 480px;
+  height: 620px;
+  margin-left: auto;
+  margin-right: auto;
+  object-fit: cover;
+  object-position: top right;
+  border-radius: 24px;
+}
+/*
+------------------------
+review card slider styles
+------------------------
+ */
+.review-card-slider-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 0.4rem;
+}
+.review-card-slider-wrapper > p {
+  font-weight: bold;
+  font-size: 1.875rem;
+  color: #253029;
+}
+.review-card-slider-wrapper > p > span {
+  font-size: 1.2rem;
+}
+.quote-card {
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 0.25rem 0.3rem rgba(0, 0, 0, 0.1),
+    0 -0.25rem 0.25rem rgba(0, 0, 0, 0.07);
+  background-color: white;
+  max-width: 448px;
+  display: flex;
+  justify-content: flex-start;
   align-items: center;
+  gap: 1rem;
+  z-index: 100;
+}
+.quote-card img {
+  border-radius: 50%;
+  object-fit: cover;
+}
+.quote {
+  font-size: 1.125rem;
+  font-weight: 400;
+  font-family: 'Open Sans', sans-serif; /* Assuming 'Open Sans' is the desired font */
+}
+.author-name {
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: #253029;
 }

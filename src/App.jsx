@@ -6,14 +6,16 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/effect-cards';
 import 'swiper/css/autoplay';
+import 'swiper/css/effect-fade';
 
-import { EffectCards, Navigation, Autoplay, Controller } from 'swiper/modules';
-import React, { useEffect, useRef, useState } from 'react';
+import { EffectCards, Navigation, Autoplay, EffectFade } from 'swiper/modules';
+import { useEffect, useRef, useState } from 'react';
 
 export default function App() {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(1);
   const imageSwiperRef = useRef(null);
   const contentSwiperRef = useRef(null);
+  const cardSwiperRef = useRef(null);
 
   const handleImageSliderChange = (swiper) => {
     setCurrentSlide(swiper.activeIndex);
@@ -24,69 +26,66 @@ export default function App() {
   };
 
   useEffect(() => {
+    // When the component mounts or currentSlide changes, go to the initial slide
     if (imageSwiperRef.current && imageSwiperRef.current.slideTo) {
       imageSwiperRef.current.slideTo(currentSlide);
     }
     if (contentSwiperRef.current && contentSwiperRef.current.slideTo) {
       contentSwiperRef.current.slideTo(currentSlide);
     }
+    if (cardSwiperRef.current && cardSwiperRef.current.slideTo) {
+      cardSwiperRef.current.slideTo(currentSlide);
+    }
   }, [currentSlide]);
 
   return (
-    <section className=''>
-      <div className='max-w-[1152px] mx-auto py-10 space-y-16 relative bg-white'>
+    <section>
+      <div className='section-wrapper'>
         {/* slider heading */}
-        <div className='text-center'>
-          <h1 className='text-5xl font-bold max-w-[710px] mx-auto'>
-            Project Spotlight Shaping the Future with Azure.
-          </h1>
+        <div className='section-heading'>
+          <h1>Project Spotlight Shaping the Future with Azure.</h1>
         </div>
 
-        {/* sub-heading & heading slider container */}
-        <div className='relative'>
-          {/* content slider wrapper */}
-          <Swiper
-            slidesPerView={1}
-            onSwiper={(swiper) => (contentSwiperRef.current = swiper)}
-            initialSlide={currentSlide}
-            controller={{ control: imageSwiperRef.current }}
-          >
-            {[1, 2, 3, 4].map((slide, index) => (
-              <SwiperSlide
-                key={index}
-                className='min-w-full py-2'
-              >
-                {/* sub heading & heading */}
-                <div className='max-w-[450px]'>
-                  <p className='text-base font-medium open'>
-                    Brand Design {slide}
-                  </p>
-                  <h2 className='text-5xl font-bold text-[#252E31]'>
-                    Fashion B&E logo branding {slide}
-                  </h2>
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+        {/* content slider wrapper */}
+        <div className='content-slider-wrapper'>
+          <div>
+            <Swiper
+              slidesPerView={1}
+              modules={[EffectFade]}
+              effect='fade'
+              fadeEffect={{ crossFade: true }}
+              onSwiper={(swiper) => (contentSwiperRef.current = swiper)}
+              initialSlide={currentSlide}
+              controller={{ control: imageSwiperRef.current }}
+            >
+              {[1, 2, 3, 4].map((slide, index) => (
+                <SwiperSlide key={index}>
+                  {/* sub heading & heading */}
+                  <div className='sub-heading-and-heading'>
+                    <p className='open'>Brand Design {slide}</p>
+                    <h2>Fashion B&E logo branding {slide}</h2>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
 
           {/* image slider wrapper */}
-          <div className='relative w-[580px] mx-auto translate-y-[-100px]'>
+          <div className='image-slider-wrapper'>
             {/* navigation buttons */}
-            <div className='flex justify-between items-center absolute top-[50%] left-0 z-[100] w-full'>
-              <button className='nav-prev rotate-[-180deg]'>
-                <IoIosArrowRoundForward />
-              </button>
-              <button className='nav-next'>
-                <IoIosArrowRoundForward />
-              </button>
-            </div>
+            <button className='nav-prev'>
+              <IoIosArrowRoundForward />
+            </button>
+            <button className='nav-next'>
+              <IoIosArrowRoundForward />
+            </button>
 
             {/* image slider */}
             <Swiper
               effect={'cards'}
               grabCursor={true}
               modules={[EffectCards, Navigation, Autoplay]}
-              className='w-[480px]'
+              className='image-slider'
               cardsEffect={{ rotate: true, perSlideRotate: -10 }}
               navigation={{
                 nextEl: '.nav-next',
@@ -101,9 +100,47 @@ export default function App() {
               {[1, 2, 3, 4].map((slide, index) => (
                 <SwiperSlide key={'img slide ' + index}>
                   <img
-                    src={`/src/assets/img/slider-img-${slide}.jpeg`}
-                    className='w-[480px] h-[620px] mx-auto object-cover object-right-top rounded-[24px]'
+                    src={`/slider-img-${slide}.jpeg`}
+                    className='card-image'
                   />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+
+          {/* review card slider */}
+          <div>
+            <Swiper
+              slidesPerView={1}
+              modules={[EffectFade]}
+              effect='fade'
+              fadeEffect={{ crossFade: true }}
+              onSwiper={(swiper) => (cardSwiperRef.current = swiper)}
+              initialSlide={currentSlide}
+              controller={{ control: imageSwiperRef.current }}
+            >
+              {[1, 2, 3, 4].map((slide, index) => (
+                <SwiperSlide key={index}>
+                  {/* slider count & quote card */}
+                  <div className='review-card-slider-wrapper'>
+                    <p>
+                      0{slide}/<span>04</span>
+                    </p>
+
+                    {/* quote card */}
+                    <div className='quote-card'>
+                      <div>
+                        <img src={`https://i.pravatar.cc/80?img=${slide}`} />
+                      </div>
+                      <div>
+                        <p className='quote'>
+                          ”Simplicity that echoes, a memorable brand identity
+                          representation.” {slide}
+                        </p>
+                        <p className='author-name'>- Albert Flores {slide}</p>
+                      </div>
+                    </div>
+                  </div>
                 </SwiperSlide>
               ))}
             </Swiper>
