@@ -4,7 +4,7 @@ const Card = () => {
   <div className='review-card'>
   {/* review card */}
  <div>
-   <img src={`https://i.pravatar.cc/80?img=1`} />
+   <img src={`https://i.pravatar.cc/80?img=59`} />
  </div>
  <div>
    <p className='review'>

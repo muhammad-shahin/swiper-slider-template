@@ -10,9 +10,11 @@ import 'swiper/css/autoplay';
 import 'swiper/css/effect-fade';
 
 import { EffectCards, Navigation, Autoplay, EffectFade } from 'swiper/modules';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 const App = ({ sliderData }) => {
+  let currentWindowWidth = window.innerWidth;
+  console.log(currentWindowWidth);
   const memoizedSliderData = useMemo(() => {
     return sliderData;
   }, [sliderData]);
@@ -25,10 +27,42 @@ const App = ({ sliderData }) => {
     contentSliderData,
     imageSliderData,
   } = memoizedSliderData;
-  console.log(memoizedSliderData);
   const imageSwiperRef = useRef(null);
   const contentSwiperRef = useRef(null);
+  const imageSliderRef = useRef(null);
 
+  useEffect(() => {
+    const handleResize = () => {
+      const windowWidth = window.innerWidth;
+
+      // Set the width and height based on screen size
+      if (imageSliderRef.current) {
+        if (windowWidth < 576) {
+          imageSliderRef.current.style.width = '220px';
+          imageSliderRef.current.style.height = '380px';
+        } else if (windowWidth >= 576 && windowWidth < 768) {
+          imageSliderRef.current.style.width = '330px';
+          imageSliderRef.current.style.height = '450px';
+        } else if (windowWidth >= 768 && windowWidth < 1240) {
+          imageSliderRef.current.style.width = '380px';
+          imageSliderRef.current.style.height = '500px';
+        } else {
+          imageSliderRef.current.style.width = `${imageWidth}px`;
+          imageSliderRef.current.style.height = `${imageHeight}px`;
+        }
+      }
+    };
+    // Initial setup
+    handleResize();
+    // Event listener for window resize
+    window.addEventListener('resize', handleResize);
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // handle image slider change to control content slider
   const handleImageSliderChange = (swiper) => {
     if (contentSwiperRef.current) {
       contentSwiperRef.current.slideTo(swiper.activeIndex);
@@ -47,6 +81,8 @@ const App = ({ sliderData }) => {
       });
     }
   };
+
+  // css styles
 
   return (
     <section>
@@ -115,6 +151,7 @@ const App = ({ sliderData }) => {
               autoplay={{ delay: 3000 }}
               controller={{ control: contentSwiperRef.current }}
               initialSlide={1}
+              ref={imageSliderRef}
             >
               {/* image slides */}
               {imageSliderData?.map((slide, index) => (

@@ -42,7 +42,7 @@ const imageSliderData = [
 ];
 
 const sliderData = {
-  imageWidth: 420,
+  imageWidth: 480,
   imageHeight: 620,
   speed: 3000,
   autoPlay: false,

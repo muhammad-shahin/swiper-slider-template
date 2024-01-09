@@ -161,7 +161,7 @@ image card slider styles
   width: 480px;
   height: 600px;
 }
-@media (max-width: 575.99px) {
+/* @media (max-width: 575.99px) {
   .image-slider {
     width: 220px;
     height: 380px;
@@ -178,9 +178,7 @@ image card slider styles
     width: 380px;
     height: 500px;
   }
-}
-@media (max-width: 1240px) {
-}
+} */
 .card-image {
   border-radius: 24px;
   /* object-position: center center; */
