@@ -183,7 +183,8 @@ image card slider styles
 }
 .card-image {
   border-radius: 24px;
-  object-position: center center;
+  /* object-position: center center; */
+  /* object-fit: contain; */
 }
 /*
 ------------------------

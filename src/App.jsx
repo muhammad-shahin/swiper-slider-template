@@ -10,16 +10,22 @@ import 'swiper/css/autoplay';
 import 'swiper/css/effect-fade';
 
 import { EffectCards, Navigation, Autoplay, EffectFade } from 'swiper/modules';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 const App = ({ sliderData }) => {
   const memoizedSliderData = useMemo(() => {
     return sliderData;
   }, [sliderData]);
 
-  const { loopSlider, contentSliderData, imageSliderData } = memoizedSliderData;
+  const {
+    imageWidth,
+    imageHeight,
+    speed,
+    autoPlay,
+    contentSliderData,
+    imageSliderData,
+  } = memoizedSliderData;
   console.log(memoizedSliderData);
-  const [currentSlide, setCurrentSlide] = useState(1);
   const imageSwiperRef = useRef(null);
   const contentSwiperRef = useRef(null);
 
@@ -57,36 +63,23 @@ const App = ({ sliderData }) => {
               noSwiping={true}
               noSwipingClass='no-touch'
             >
-              {[1, 2, 3, 4].map((slide, index) => (
-                <SwiperSlide key={index}>
+              {contentSliderData?.map((slide, index) => (
+                <SwiperSlide key={'content slide' + index}>
                   <div className='slider-content-wrapper no-touch slider-content'>
                     {/* sub heading & heading */}
                     <div className='sub-heading-and-heading'>
-                      <p className='open'>Brand Design {slide}</p>
-                      <h2>Fashion B&E logo branding {slide}</h2>
+                      <p className='open'>{slide.text}</p>
+                      <h2>{slide.title}</h2>
                     </div>
 
                     {/* slider counter & review card  */}
                     <div className='review-card-slider-wrapper'>
                       <p>
-                        0{slide}/<span>04</span>
+                        0{index + 1}/<span>{contentSliderData?.length}</span>
                       </p>
 
                       {/* review card */}
-                      <div className='review-card'>
-                        <div>
-                          <img src={`https://i.pravatar.cc/80?img=${slide}`} />
-                        </div>
-                        <div>
-                          <p className='review'>
-                            ”Simplicity that echoes, a memorable brand identity
-                            representation.” {slide}
-                          </p>
-                          <p className='reviewer-name'>
-                            - Albert Flores {slide}
-                          </p>
-                        </div>
-                      </div>
+                      {slide.card}
                     </div>
                   </div>
                 </SwiperSlide>
@@ -121,12 +114,13 @@ const App = ({ sliderData }) => {
               allowTouchMove={true}
               autoplay={{ delay: 3000 }}
               controller={{ control: contentSwiperRef.current }}
+              initialSlide={1}
             >
               {/* image slides */}
-              {[1, 2, 3, 4].map((slide, index) => (
+              {imageSliderData?.map((slide, index) => (
                 <SwiperSlide key={'img slide ' + index}>
                   <img
-                    src={`/slider-img-${slide}.jpeg`}
+                    src={slide.imageLink}
                     className='card-image'
                   />
                 </SwiperSlide>
