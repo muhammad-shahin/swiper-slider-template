@@ -1,0 +1,821 @@
+// Welcome to Code in Framer
+// Get Started: https://www.framer.com/developers
+import { useState, useRef, useEffect } from "react"
+
+import SliderAssets, {
+    loadCSS,
+} from "https://framer.com/m/SliderAssets-J0B8.js@glNBm2oqYE8wmtaTXTSe"
+import framer, { addPropertyControls, ControlType, withCSS } from "framer"
+import { motion } from "framer-motion"
+
+// slick css injection through dom
+loadCSS("https://cdn.skypack.dev/slick-carousel/slick/slick.css")
+loadCSS("https://cdn.skypack.dev/slick-carousel/slick/slick-theme.css")
+
+/**
+ * These annotations control how your component sizes
+ * Learn more: https://www.framer.com/developers/#code-components-auto-sizing
+ *
+ * @framerSupportedLayoutWidth any
+ * @framerSupportedLayoutHeight any
+ * @framerDisableUnlink
+ */
+
+/**
+ * ---------------------------
+ * css generate function
+ * ---------------------------
+ */
+export default function FramerSlick(props) {
+    const [slider1, setSlider1] = useState(null)
+    const [slider2, setSlider2] = useState(null)
+    const nav1 = useRef(null)
+    const nav2 = useRef(null)
+    const [Component, setComponent] = useState(null)
+    useEffect(() => {
+        setSlider1(nav1?.current)
+        setSlider2(nav2?.current)
+    }, [Component])
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            // Dynamically import the module or component when matchMedia is available
+            import("https://cdn.skypack.dev/react-slick").then((module) => {
+                setComponent(() => module.default) // Assuming it's a default export
+            })
+        } else {
+            // Handle the case where matchMedia is not available
+            setComponent(null)
+            // You might want to import a different component or take some other action
+        }
+    }, [])
+
+    if (!Component) {
+        return null // Or some other loading indicator
+    }
+    const slider2Position =
+        props?.SecondarySliderSettings?.SecondarySliderPosition
+    const activeSlider = props?.SecondarySliderSettings?.activeSlider
+    let arrowsDirection = props?.arrowsSettings?.direction
+    if (arrowsDirection) {
+        arrowsDirection = "column-reverse"
+    } else {
+        arrowsDirection = "column"
+    }
+    // arrowsCornerLocation
+    let arrowsCornerLocation = props?.arrowsSettings?.location
+    if (arrowsCornerLocation.includes("Left")) {
+        arrowsCornerLocation = "start"
+    } else if (arrowsCornerLocation.includes("Center")) {
+        arrowsCornerLocation = "center"
+    } else if (arrowsCornerLocation.includes("Two Side")) {
+        arrowsCornerLocation = "space-between"
+    }
+    // arrow block position
+    let arrowBlockPosition = props?.arrowsSettings?.location
+    if (props?.arrowsSettings?.location === "Flexible") {
+        arrowBlockPosition = "absolute"
+    } else if (props?.arrowsSettings?.location === "Two Side") {
+        arrowBlockPosition = "absolute"
+    } else {
+        arrowBlockPosition = "relative"
+    }
+    // arrow block margin
+    let arrowBlockPaddingMargin = props?.arrowsSettings
+    // arrow icon properties
+    let prevIconProperties = props?.arrowsSettings?.prevIcon
+    let nextIconProperties = props?.arrowsSettings?.nextIcon
+
+    // mulit row slider
+    const multiRowSliderSettings = {
+        centerMode: props?.PrimarySliderSettings?.centerMode,
+        centerPadding: `${props?.PrimarySliderSettings?.centerPadding + "px"}`,
+        row: props?.PrimarySliderSettings?.row,
+        slidesPerRow: props?.PrimarySliderSettings?.slidesPerRow,
+        className: "center",
+    }
+
+    const slides1ID = crypto.randomUUID()
+    const slides2ID = crypto.randomUUID()
+    const dotsID = crypto.randomUUID()
+    function generateCSS() {
+        const css = `
+                 .slides-1-${slides1ID} > div{
+                    width: ${props?.PrimarySliderSettings?.width}% !important;
+                }
+                 .slides-2-${slides2ID} > div{
+                    width: ${props?.SecondarySliderSettings?.width}% !important;
+                }
+                 .secondary-slider-${slides2ID} {
+                    position: static;
+                    top: 0;
+                    right: 0;
+                    height: auto !important;
+                }
+                .slick-track{
+                    height: auto !important;
+                }
+                .secondary-slider-${slides2ID} > .slick-list > .slick-track {
+                    display: flex;
+                    flex-direction: ${
+                        slider2Position === "Top" ||
+                        slider2Position === "Bottom"
+                            ? "row"
+                            : "column"
+                    }; !important;
+                    gap: ${props?.SecondarySliderSettings?.gap}px;
+                    justify-content: center;
+                    align-items: center;
+                }
+                .secondary-slider-${slides2ID} > .slick-list > .slick-track > .slick-slide {
+                    border: ${activeSlider?.borderSize}px solid transparent;
+                }
+                .secondary-slider-${slides2ID} > .slick-list > .slick-track > .slick-current {
+                    border: ${activeSlider?.borderSize}px ${
+            activeSlider?.borderStyle
+        } ${activeSlider?.borderColor};
+                    border-radius: ${activeSlider?.borderRadius}px;
+                }
+                .slick-arrow{
+                    display: none !important;
+                }
+                .arrow-left, .arrow-right{
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    transition: all 0.3s linear;
+                }
+                .arrow-left > img, .arrow-right > img{
+                    max-width: 100%;
+                }
+                .arrow-left > img.hover-icon, .arrow-right > img.hover-icon{
+                    display:none
+                }
+                .arrow-left:hover{
+                    background-color: ${prevIconProperties?.hoverBgColor};
+                    transition: all 0.3s linear;
+                }
+                .arrow-right:hover{
+                    background-color: ${nextIconProperties?.hoverBgColor};
+                    transition: all 0.3s linear;
+                }
+                
+                .arrow:hover img:not(.hover-icon){
+                    display:none;
+                }
+                .arrow:hover .hover-icon{
+                    display:block;
+                }
+                .slider-1-${dotsID} > .slick-slider > .slick-dots > li > button:before{
+                    color: ${props?.PrimarySliderSettings?.dots?.color};
+                    font-size: ${
+                        props?.PrimarySliderSettings?.dots?.size
+                    }px !important;
+                }
+                .slider-1-${dotsID} > .slick-slider > .slick-dots > li.slick-active > button:before{
+                    color: ${props?.PrimarySliderSettings?.dots?.hoverColor};
+                }
+`
+        return css
+    }
+    return (
+        <>
+            <style>{generateCSS()}</style>
+            <div
+                className="slider-containers"
+                style={{
+                    display: "flex",
+                    flexDirection: arrowsDirection,
+                    justifyContent: "center",
+                }}
+            >
+                <div
+                    className="slider-wrappers"
+                    style={{
+                        display: "flex",
+                        flexDirection:
+                            (slider2Position === "Right" && "row") ||
+                            (slider2Position === "Left" && "row-reverse") ||
+                            (slider2Position === "Bottom" && "column") ||
+                            (slider2Position === "Top" && "column-reverse"),
+                        gap: `${props?.Gap}px`,
+                        justifyContent: "center",
+                        padding: `0 ${
+                            props?.arrowsSettings?.location === "Two Side" &&
+                            nextIconProperties?.size + 8
+                        }px 0 ${
+                            props?.arrowsSettings?.location === "Two Side" &&
+                            prevIconProperties?.size + 8
+                        }px`,
+                    }}
+                >
+                    <div
+                        className={`slider-1-${dotsID}`}
+                        style={{
+                            width:
+                                slider2Position === "Top" ||
+                                slider2Position === "Bottom" ||
+                                props?.AsNavFor !== true
+                                    ? "100%"
+                                    : "70%",
+                            margin: "auto 0",
+                        }}
+                    >
+                        <Component
+                            {...props?.PrimarySliderSettings?.settings}
+                            {...multiRowSliderSettings}
+                            ref={nav1}
+                            asNavFor={slider2}
+                        >
+                            {props?.PrimarySlides?.length > 0 ? (
+                                props?.PrimarySlides?.map((slide) => (
+                                    <div className={`slides-1-${slides1ID}`}>
+                                        {slide}
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="slide">No Slides</div>
+                            )}
+                        </Component>
+                    </div>
+                    <div
+                        className="slider-2s"
+                        style={{
+                            width:
+                                slider2Position === "Top" ||
+                                slider2Position === "Bottom"
+                                    ? "100%"
+                                    : "30%",
+                            display: props?.AsNavFor ? "block" : "none",
+                            height: "auto",
+                            margin: "auto 0",
+                        }}
+                    >
+                        <Component
+                            className={`secondary-slider-${slides2ID}`}
+                            asNavFor={slider1}
+                            ref={nav2}
+                            vertical={
+                                slider2Position === "Top" ||
+                                slider2Position === "Bottom"
+                                    ? false
+                                    : true
+                            }
+                            verticalSwiping={
+                                slider2Position === "Top" ||
+                                slider2Position === "Bottom"
+                                    ? false
+                                    : true
+                            }
+                            {...props?.SecondarySliderSettings?.settings}
+                        >
+                            {props?.SecondarySlides?.length > 0 ? (
+                                props?.SecondarySlides?.map((slide) => (
+                                    <div className={`slides-2-${slides2ID}`}>
+                                        {slide}
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="slides2">No Nav Slides</div>
+                            )}
+                        </Component>
+                    </div>
+                </div>
+                <div
+                    className="arrow-blocks"
+                    style={{
+                        overflow: "hidden",
+                        position: arrowBlockPosition,
+                        height: "fit-content",
+                        top:
+                            props?.arrowsSettings?.location === "Two Side"
+                                ? "50%"
+                                : "0",
+                        right: `${props?.arrowsSettings?.right}px`,
+                        bottom: `${props?.arrowsSettings?.bottom}px`,
+                        left: `${props?.arrowsSettings?.left}px`,
+                        zIndex: 500,
+                        display: "flex",
+                        gap: `${props?.arrowsSettings?.gap}px`,
+                        justifyContent: arrowsCornerLocation,
+                        pointerEvents: "auto",
+                        margin: arrowBlockPaddingMargin.isMixed
+                            ? `${arrowBlockPaddingMargin.Top}px ${arrowBlockPaddingMargin.Right}px ${arrowBlockPaddingMargin.Bottom}px ${arrowBlockPaddingMargin.Left}px`
+                            : `${arrowBlockPaddingMargin.margin}px`,
+                        padding: arrowBlockPaddingMargin.isPaddingMixed
+                            ? `${arrowBlockPaddingMargin.paddingTop}px ${arrowBlockPaddingMargin.paddingRight}px ${arrowBlockPaddingMargin.paddingBottom}px ${arrowBlockPaddingMargin.paddingLeft}px`
+                            : `${arrowBlockPaddingMargin.padding}px`,
+                        marginTop: `${
+                            props?.arrowsSettings?.location !== "Two Side" &&
+                            !arrowBlockPaddingMargin.Top &&
+                            !arrowBlockPaddingMargin.margin
+                                ? "20px"
+                                : arrowBlockPaddingMargin.Top ||
+                                  arrowBlockPaddingMargin.margin
+                        }`,
+                    }}
+                >
+                    <div
+                        className="arrow arrow-left"
+                        style={{
+                            width: `${prevIconProperties?.size}px`,
+                            height: `${prevIconProperties?.size}px`,
+                            backgroundColor: `${prevIconProperties?.bgColor}`,
+                            borderRadius: `${prevIconProperties?.borderRadius}px`,
+                            cursor: "pointer",
+                            padding: prevIconProperties?.isPrevMixed
+                                ? `${prevIconProperties?.prevTop}px ${prevIconProperties?.prevRight}px ${prevIconProperties?.prevBottom}px ${prevIconProperties?.prevLeft}px`
+                                : `${prevIconProperties?.padding}px`,
+                        }}
+                        onClick={() => {
+                            nav1.current.slickPrev()
+                        }}
+                    >
+                        <img
+                            src={
+                                prevIconProperties?.hoverIcon
+                                    ? prevIconProperties?.hoverIcon
+                                    : prevIconProperties?.icon
+                            }
+                            className="hover-icon"
+                        />
+                        <img src={prevIconProperties?.icon} />
+                    </div>
+                    <div
+                        className="arrow arrow-right"
+                        style={{
+                            width: `${nextIconProperties?.size}px`,
+                            height: `${nextIconProperties?.size}px`,
+                            backgroundColor: `${nextIconProperties?.bgColor}`,
+                            borderRadius: `${nextIconProperties?.borderRadius}px`,
+                            cursor: "pointer",
+                            padding: nextIconProperties?.isNextMixed
+                                ? `${nextIconProperties?.nextTop}px ${nextIconProperties?.nextRight}px ${nextIconProperties?.nextBottom}px ${nextIconProperties?.nextLeft}px`
+                                : `${nextIconProperties?.padding}px`,
+                        }}
+                        onClick={() => {
+                            nav1.current.slickNext()
+                        }}
+                    >
+                        <img
+                            src={
+                                nextIconProperties?.hoverIcon
+                                    ? nextIconProperties?.hoverIcon
+                                    : nextIconProperties?.icon
+                            }
+                            className="hover-icon"
+                        />
+                        <img src={nextIconProperties?.icon} />
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}
+
+// ================ PROPERTY CONTROLS FOR FIRST AND SECOND SLIDER ======================================================
+
+addPropertyControls(FramerSlick, {
+    PrimarySlides: {
+        type: ControlType.Array,
+        title: "Slider Items",
+        control: {
+            type: ControlType.ComponentInstance,
+        },
+    },
+    PrimarySliderSettings: {
+        type: ControlType.Object,
+        title: "Settings",
+        controls: {
+            settings: {
+                type: ControlType.Object,
+                controls: {
+                    dots: { type: ControlType.Boolean, defaultValue: true },
+                    infinite: { type: ControlType.Boolean, defaultValue: true },
+                    autoplay: { type: ControlType.Boolean, defaultValue: true },
+                    swipeToSlide: {
+                        type: ControlType.Boolean,
+                        defaultValue: true,
+                    },
+                    autoPlaySpeed: {
+                        type: ControlType.Number,
+                        defaultValue: 0,
+                        hidden(props) {
+                            return props?.autoplay === false
+                        },
+                    },
+                    cssEase: {
+                        type: ControlType.Enum,
+                        title: "CSS Ease",
+                        defaultValue: "linear",
+                        displaySegmentedControl: false,
+                        segmentedControlDirection: "vertical",
+                        optionTitles: [
+                            "Linear",
+                            "Ease",
+                            "Ease In",
+                            "Ease In Out",
+                            "Ease In",
+                            "Ease Out",
+                        ],
+                        options: [
+                            "linear",
+                            "ease",
+                            "ease-in",
+                            "ease-in-out",
+                            "ease-in",
+                            "ease-out",
+                        ],
+                        hidden(props) {
+                            return props?.autoplay === false
+                        },
+                    },
+                    pauseOnHover: {
+                        type: ControlType.Boolean,
+                        defaultValue: false,
+                    },
+                    focusOnSelect: {
+                        type: ControlType.Boolean,
+                        defaultValue: false,
+                    },
+                    centerMode: {
+                        type: ControlType.Boolean,
+                        defaultValue: false,
+                    },
+                    fade: {
+                        type: ControlType.Boolean,
+                        defaultValue: false,
+                    },
+                    lazyLoad: {
+                        type: ControlType.Boolean,
+                        defaultValue: false,
+                    },
+                    vertical: {
+                        type: ControlType.Boolean,
+                        defaultValue: false,
+                    },
+                    verticalSwiping: {
+                        type: ControlType.Boolean,
+                        defaultValue: false,
+                    },
+                    speed: { type: ControlType.Number, defaultValue: 500 },
+                    slidesToShow: { type: ControlType.Number, defaultValue: 1 },
+                    slidesToScroll: {
+                        type: ControlType.Number,
+                        defaultValue: 1,
+                    },
+                },
+            },
+            width: { type: ControlType.Number, defaultValue: 100, unit: "%" },
+            dots: {
+                type: ControlType.Object,
+                controls: {
+                    color: { type: ControlType.Color, defaultValue: "blue" },
+                    hoverColor: {
+                        type: ControlType.Color,
+                        defaultValue: "purple",
+                    },
+                    size: { type: ControlType.Number, defaultValue: 20 },
+                },
+                hidden(props) {
+                    return props?.settings?.dots === false
+                },
+            },
+            multiRow: {
+                type: ControlType.Boolean,
+                defaultValue: false,
+                disabledTitle: "Hide",
+                enabledTitle: "Show",
+            },
+            centerMode: {
+                type: ControlType.Boolean,
+                defaultValue: false,
+                hidden(props) {
+                    return props?.multiRow === false
+                },
+            },
+            centerPadding: {
+                type: ControlType.Number,
+                defaultValue: 60,
+                unit: "px",
+                hidden(props) {
+                    return props?.multiRow === false
+                },
+            },
+            row: {
+                type: ControlType.Number,
+                defaultValue: 1,
+                hidden(props) {
+                    return props?.multiRow === false
+                },
+            },
+            slidesPerRow: {
+                type: ControlType.Number,
+                defaultValue: 1,
+                hidden(props) {
+                    return props?.multiRow === false
+                },
+            },
+        },
+    },
+    AsNavFor: {
+        type: ControlType.Boolean,
+        defaultValue: false,
+        disabledTitle: "Hide",
+        enabledTitle: "Show",
+    },
+    Gap: {
+        type: ControlType.Number,
+        title: "Gap",
+        defaultValue: 0,
+        hidden(props) {
+            return props?.AsNavFor === false
+        },
+    },
+    SecondarySlides: {
+        type: ControlType.Array,
+        title: "Nav Slides",
+        control: {
+            type: ControlType.ComponentInstance,
+        },
+        hidden(props) {
+            return props?.AsNavFor === false
+        },
+    },
+    SecondarySliderSettings: {
+        type: ControlType.Object,
+        title: "Settings",
+        description: "Settings for Nav Slides",
+        controls: {
+            width: { type: ControlType.Number, defaultValue: 100, unit: "%" },
+            SecondarySliderPosition: {
+                type: ControlType.Enum,
+                title: "Position",
+                defaultValue: "Bottom",
+                displaySegmentedControl: false,
+                segmentedControlDirection: "vertical",
+                optionTitles: ["Right", "Left", "Top", "Bottom"],
+                options: ["Right", "Left", "Top", "Bottom"],
+                hidden(props) {
+                    return props?.AsNavFor === false
+                },
+            },
+            gap: {
+                type: ControlType.Number,
+                title: "Gap",
+                defaultValue: 0,
+            },
+            activeSlider: {
+                type: ControlType.Object,
+                controls: {
+                    borderSize: {
+                        title: "Size",
+                        type: ControlType.Number,
+                        defaultValue: 2,
+                        unit: "px",
+                    },
+                    borderStyle: {
+                        title: "Style",
+                        type: ControlType.Enum,
+                        defaultValue: "solid",
+                        displaySegmentedControl: false,
+                        segmentedControlDirection: "vertical",
+                        options: ["solid", "dotted", "dashed", "double"],
+                        optionTitles: ["Solid", "Dotted", "Dashed", "Double"],
+                    },
+                    borderColor: {
+                        title: "Color",
+                        type: ControlType.Color,
+                        defaultValue: "transparent",
+                    },
+                    borderRadius: {
+                        title: "Radius",
+                        type: ControlType.Number,
+                        defaultValue: 0,
+                        unit: "px",
+                    },
+                },
+            },
+            settings: {
+                type: ControlType.Object,
+                controls: {
+                    dots: { type: ControlType.Boolean, defaultValue: true },
+                    infinite: { type: ControlType.Boolean, defaultValue: true },
+                    swipeToSlide: {
+                        type: ControlType.Boolean,
+                        defaultValue: true,
+                    },
+                    focusOnSelect: {
+                        type: ControlType.Boolean,
+                        defaultValue: true,
+                    },
+                    fade: {
+                        type: ControlType.Boolean,
+                        defaultValue: false,
+                    },
+                    lazyLoad: {
+                        type: ControlType.Boolean,
+                        defaultValue: false,
+                    },
+                    speed: { type: ControlType.Number, defaultValue: 500 },
+                    slidesToShow: { type: ControlType.Number, defaultValue: 3 },
+                    slidesToScroll: {
+                        type: ControlType.Number,
+                        defaultValue: 1,
+                    },
+                },
+            },
+        },
+        hidden(props) {
+            return props?.AsNavFor === false
+        },
+    },
+    arrowsSettings: {
+        type: ControlType.Object,
+        title: "Arrows Settings",
+        controls: {
+            prevIcon: {
+                type: ControlType.Object,
+                controls: {
+                    icon: { type: ControlType.Image },
+                    hoverIcon: {
+                        type: ControlType.Image,
+                    },
+                    bgColor: {
+                        type: ControlType.Color,
+                        title: "Color",
+                        defaultValue: "transparent",
+                    },
+                    hoverBgColor: {
+                        type: ControlType.Color,
+                        title: "Hover Color",
+                        defaultValue: "transparent",
+                    },
+                    size: {
+                        type: ControlType.Number,
+                        defaultValue: 48,
+                        unit: "px",
+                    },
+                    borderRadius: {
+                        type: ControlType.Number,
+                        defaultValue: 24,
+                        unit: "px",
+                    },
+                    padding: {
+                        type: ControlType.FusedNumber,
+                        defaultValue: 0,
+                        toggleKey: "isPrevMixed",
+                        toggleTitles: ["All", "Individual"],
+                        valueKeys: [
+                            "prevTop",
+                            "prevRight",
+                            "prevBottom",
+                            "prevLeft",
+                        ],
+                        valueLabels: ["T", "R", "B", "L"],
+                        unit: "px",
+                    },
+                },
+            },
+            nextIcon: {
+                type: ControlType.Object,
+                controls: {
+                    icon: { type: ControlType.Image },
+                    hoverIcon: {
+                        type: ControlType.Image,
+                    },
+                    bgColor: {
+                        type: ControlType.Color,
+                        title: "Color",
+                        defaultValue: "transparent",
+                    },
+                    hoverBgColor: {
+                        type: ControlType.Color,
+                        title: "Hover Color",
+                        defaultValue: "transparent",
+                    },
+                    size: {
+                        type: ControlType.Number,
+                        defaultValue: 48,
+                        unit: "px",
+                    },
+                    borderRadius: {
+                        type: ControlType.Number,
+                        defaultValue: 24,
+                        unit: "px",
+                    },
+                    padding: {
+                        type: ControlType.FusedNumber,
+                        defaultValue: 0,
+                        toggleKey: "isNextMixed",
+                        toggleTitles: ["All", "Individual"],
+                        valueKeys: [
+                            "nextTop",
+                            "nextRight",
+                            "nextBottom",
+                            "nextLeft",
+                        ],
+                        valueLabels: ["T", "R", "B", "L"],
+                        unit: "px",
+                    },
+                },
+            },
+            direction: {
+                type: ControlType.Boolean,
+                defaultValue: false,
+                disabledTitle: "Bottom",
+                enabledTitle: "Top",
+            },
+            location: {
+                type: ControlType.Enum,
+                title: "Location",
+                defaultValue: "center",
+                displaySegmentedControl: false,
+                segmentedControlDirection: "vertical",
+                optionTitles: [
+                    "Two Side",
+                    "Center",
+                    "Left",
+                    "Right",
+                    "Space Between",
+                    "Space Around",
+                    "Space Evenly",
+                    "Flexible",
+                ],
+                options: [
+                    "Two Side",
+                    "Center",
+                    "Left",
+                    "Right",
+                    "space-between",
+                    "space-around",
+                    "space-evenly",
+                    "Flexible",
+                ],
+            },
+            gap: {
+                type: ControlType.Number,
+                defaultValue: 0,
+                unit: "px",
+            },
+            margin: {
+                type: ControlType.FusedNumber,
+                defaultValue: 0,
+                toggleKey: "isMixed",
+                toggleTitles: ["All", "Individual"],
+                valueKeys: ["Top", "Right", "Bottom", "Left"],
+                valueLabels: ["T", "R", "B", "L"],
+            },
+            padding: {
+                type: ControlType.FusedNumber,
+                defaultValue: 0,
+                toggleKey: "isPaddingMixed",
+                toggleTitles: ["All", "Individual"],
+                valueKeys: [
+                    "paddingTop",
+                    "paddingRight",
+                    "paddingBottom",
+                    "paddingLeft",
+                ],
+                valueLabels: ["T", "R", "B", "L"],
+            },
+            top: {
+                title: "top",
+                type: ControlType.Number,
+                defaultValue: 0,
+                displayStepper: true,
+                hidden(props) {
+                    return props.location !== "Flexible"
+                },
+            },
+            left: {
+                title: "left",
+                type: ControlType.Number,
+                defaultValue: 0,
+                displayStepper: true,
+                hidden(props) {
+                    return props.location !== "Flexible"
+                },
+            },
+            bottom: {
+                title: "bottom",
+                type: ControlType.Number,
+                defaultValue: 0,
+                displayStepper: true,
+                hidden(props) {
+                    return props.location !== "Flexible"
+                },
+            },
+            right: {
+                title: "right",
+                type: ControlType.Number,
+                defaultValue: 0,
+                displayStepper: true,
+                hidden(props) {
+                    return props.location !== "Flexible"
+                },
+            },
+        },
+    },
+})
+
