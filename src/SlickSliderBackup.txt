@@ -149,30 +149,50 @@ export default function FramerSlick(props) {
                 .arrow-block-${arrowBlockID}{
                     ${
                         (props?.arrowsSettings?.position === "Top Left" &&
-                            `top: 0;
-                            left: 0;`) ||
+                            `top: ${props?.arrowsSettings?.top}px;
+                            left: ${props?.arrowsSettings?.left}px;`) ||
                         (props?.arrowsSettings?.position === "Top Right" &&
-                            `top: 0;
-                            right: 0;`) ||
+                            `top: ${props?.arrowsSettings?.top}px;
+                            right: ${props?.arrowsSettings?.right}px;`) ||
                         (props?.arrowsSettings?.position === "Top Center" &&
-                            `top: 0;
-                            left: 50%;
-                            transform: translateX(-50%);`) ||
+                            `top: ${props?.arrowsSettings?.top}px;
+                            left: ${
+                                props?.arrowsSettings?.left > 0
+                                    ? props?.arrowsSettings?.left
+                                    : 50
+                            }%;
+                            transform: translateX(-${
+                                props?.arrowsSettings?.left > 0
+                                    ? props?.arrowsSettings?.left
+                                    : 50
+                            }%);`) ||
                         (props?.arrowsSettings?.position === "Bottom Left" &&
-                            `bottom: 0;
-                            left: 0;`) ||
+                            `bottom: ${props?.arrowsSettings?.bottom}px;
+                            left: ${props?.arrowsSettings?.left}px;`) ||
                         (props?.arrowsSettings?.position === "Bottom Right" &&
-                            `bottom: 0;
-                            right: 0;`) ||
+                            `bottom: ${props?.arrowsSettings?.bottom}px;
+                            right: ${props?.arrowsSettings?.right}px;`) ||
                         (props?.arrowsSettings?.position === "Bottom Center" &&
-                            `bottom: 0;
-                            left: 50%;
-                            transform: translateX(-50%);`) ||
+                            `bottom: ${props?.arrowsSettings?.bottom}px;
+                            left: ${
+                                props?.arrowsSettings?.left > 0
+                                    ? props?.arrowsSettings?.left
+                                    : 50
+                            }%;
+                            transform: translateX(-${
+                                props?.arrowsSettings?.left > 0
+                                    ? props?.arrowsSettings?.left
+                                    : 50
+                            }%);`) ||
                         (props?.arrowsSettings?.position === "Two Side" &&
                             `justify-content : space-between !important;
                             width: 100%;
-                            top: 50%;
-                            left: 0;`)
+                            top: ${
+                                props?.arrowsSettings?.top > 0
+                                    ? props?.arrowsSettings?.top
+                                    : 50
+                            }%;
+                            left: ${props?.arrowsSettings?.left}px;`)
                     }
                 }
                 .arrow-left, .arrow-right{
