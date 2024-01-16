@@ -70,6 +70,8 @@ export default function FramerSlick(props) {
         arrowsCornerLocation = "center"
     } else if (arrowsCornerLocation.includes("Two Side")) {
         arrowsCornerLocation = "space-between"
+    } else if (arrowsCornerLocation.includes("Flexible")) {
+        arrowsCornerLocation = "center"
     }
     // arrow block position
     let arrowBlockPosition = props?.arrowsSettings?.location
@@ -97,9 +99,16 @@ export default function FramerSlick(props) {
 
     const slides1ID = crypto.randomUUID()
     const slides2ID = crypto.randomUUID()
-    const dotsID = crypto.randomUUID()
+    const primarySliderID = crypto.randomUUID()
+    const arrowBlockID = crypto.randomUUID()
     function generateCSS() {
         const css = `
+                .slider-1-${primarySliderID} > .slick-slider > .slick-list > .slick-track > .slick-slide{
+                    padding:0px ${props?.PrimarySliderSettings?.sliderGap}px;
+                }
+                .slider-1-${primarySliderID} > .slick-slider > .slick-list{
+                    margin:0px -${props?.PrimarySliderSettings?.sliderGap}px;
+                }
                  .slides-1-${slides1ID} > div{
                     width: ${props?.PrimarySliderSettings?.width}% !important;
                 }
@@ -131,13 +140,40 @@ export default function FramerSlick(props) {
                     border: ${activeSlider?.borderSize}px solid transparent;
                 }
                 .secondary-slider-${slides2ID} > .slick-list > .slick-track > .slick-current {
-                    border: ${activeSlider?.borderSize}px ${
-            activeSlider?.borderStyle
-        } ${activeSlider?.borderColor};
+                    border: ${activeSlider?.borderSize}px ${activeSlider?.borderStyle} ${activeSlider?.borderColor};
                     border-radius: ${activeSlider?.borderRadius}px;
                 }
                 .slick-arrow{
                     display: none !important;
+                }
+                .arrow-block-${arrowBlockID}{
+                    ${
+                        (props?.arrowsSettings?.position === "Top Left" &&
+                            `top: 0;
+                            left: 0;`) ||
+                        (props?.arrowsSettings?.position === "Top Right" &&
+                            `top: 0;
+                            right: 0;`) ||
+                        (props?.arrowsSettings?.position === "Top Center" &&
+                            `top: 0;
+                            left: 50%;
+                            transform: translateX(-50%);`) ||
+                        (props?.arrowsSettings?.position === "Bottom Left" &&
+                            `bottom: 0;
+                            left: 0;`) ||
+                        (props?.arrowsSettings?.position === "Bottom Right" &&
+                            `bottom: 0;
+                            right: 0;`) ||
+                        (props?.arrowsSettings?.position === "Bottom Center" &&
+                            `bottom: 0;
+                            left: 50%;
+                            transform: translateX(-50%);`) ||
+                        (props?.arrowsSettings?.position === "Two Side" &&
+                            `justify-content : space-between !important;
+                            width: 100%;
+                            top: 50%;
+                            left: 0;`)
+                    }
                 }
                 .arrow-left, .arrow-right{
                     display: flex;
@@ -166,18 +202,27 @@ export default function FramerSlick(props) {
                 .arrow:hover .hover-icon{
                     display:block;
                 }
-                .slider-1-${dotsID} > .slick-slider > .slick-dots > li > button:before{
+                .slider-1-${primarySliderID} > .slick-slider > .slick-dots > li > button:before{
                     color: ${props?.PrimarySliderSettings?.dots?.color};
-                    font-size: ${
-                        props?.PrimarySliderSettings?.dots?.size
-                    }px !important;
+                    font-size: ${props?.PrimarySliderSettings?.dots
+                        ?.size}px !important;
                 }
-                .slider-1-${dotsID} > .slick-slider > .slick-dots > li.slick-active > button:before{
-                    color: ${props?.PrimarySliderSettings?.dots?.hoverColor};
+                .slider-1-${primarySliderID} > .slick-slider > .slick-dots > li.slick-active > button:before{
+                    color: ${props?.PrimarySliderSettings?.dots?.color};
+                }
+                .sample-slides{
+                    padding: 80px;
+                    text-align: center;
+                    width: 100%;
+                    background-color: crimson;
+                    font-weight: 700;
+                    color: white;
+                    font-size: 48px;
                 }
 `
         return css
     }
+    console.log(prevIconProperties?.icon)
     return (
         <>
             <style>{generateCSS()}</style>
@@ -210,7 +255,7 @@ export default function FramerSlick(props) {
                     }}
                 >
                     <div
-                        className={`slider-1-${dotsID}`}
+                        className={`slider-1-${primarySliderID}`}
                         style={{
                             width:
                                 slider2Position === "Top" ||
@@ -227,15 +272,20 @@ export default function FramerSlick(props) {
                             ref={nav1}
                             asNavFor={slider2}
                         >
-                            {props?.PrimarySlides?.length > 0 ? (
-                                props?.PrimarySlides?.map((slide) => (
-                                    <div className={`slides-1-${slides1ID}`}>
-                                        {slide}
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="slide">No Slides</div>
-                            )}
+                            {props?.PrimarySlides?.length > 0
+                                ? props?.PrimarySlides?.map((slide) => (
+                                      <div className={`slides-1-${slides1ID}`}>
+                                          {slide}
+                                      </div>
+                                  ))
+                                : [1, 2, 3, 4].map((slide, index) => (
+                                      <div
+                                          key={slide}
+                                          className="sample-slides"
+                                      >
+                                          Slide {slide}
+                                      </div>
+                                  ))}
                         </Component>
                     </div>
                     <div
@@ -282,18 +332,11 @@ export default function FramerSlick(props) {
                     </div>
                 </div>
                 <div
-                    className="arrow-blocks"
+                    className={`arrow-block-${arrowBlockID}`}
                     style={{
                         overflow: "hidden",
                         position: arrowBlockPosition,
                         height: "fit-content",
-                        top:
-                            props?.arrowsSettings?.location === "Two Side"
-                                ? "50%"
-                                : "0",
-                        right: `${props?.arrowsSettings?.right}px`,
-                        bottom: `${props?.arrowsSettings?.bottom}px`,
-                        left: `${props?.arrowsSettings?.left}px`,
                         zIndex: 500,
                         display: "flex",
                         gap: `${props?.arrowsSettings?.gap}px`,
@@ -321,6 +364,7 @@ export default function FramerSlick(props) {
                             width: `${prevIconProperties?.size}px`,
                             height: `${prevIconProperties?.size}px`,
                             backgroundColor: `${prevIconProperties?.bgColor}`,
+                            border: `${prevIconProperties?.borderSize}px solid ${prevIconProperties?.borderColor}`,
                             borderRadius: `${prevIconProperties?.borderRadius}px`,
                             cursor: "pointer",
                             padding: prevIconProperties?.isPrevMixed
@@ -333,13 +377,22 @@ export default function FramerSlick(props) {
                     >
                         <img
                             src={
-                                prevIconProperties?.hoverIcon
-                                    ? prevIconProperties?.hoverIcon
-                                    : prevIconProperties?.icon
+                                (prevIconProperties?.hoverIcon &&
+                                    prevIconProperties?.hoverIcon) ||
+                                prevIconProperties?.icon
+                                    ? prevIconProperties?.icon
+                                    : "https://i.ibb.co/KK9fbn2/prev.png"
                             }
                             className="hover-icon"
                         />
-                        <img src={prevIconProperties?.icon} />
+                        <img
+                            src={
+                                prevIconProperties?.icon
+                                    ? prevIconProperties?.icon
+                                    : "https://i.ibb.co/KK9fbn2/prev.png"
+                            }
+                            loading="lazy"
+                        />
                     </div>
                     <div
                         className="arrow arrow-right"
@@ -347,6 +400,7 @@ export default function FramerSlick(props) {
                             width: `${nextIconProperties?.size}px`,
                             height: `${nextIconProperties?.size}px`,
                             backgroundColor: `${nextIconProperties?.bgColor}`,
+                            border: `${nextIconProperties?.borderSize}px solid ${nextIconProperties?.borderColor}`,
                             borderRadius: `${nextIconProperties?.borderRadius}px`,
                             cursor: "pointer",
                             padding: nextIconProperties?.isNextMixed
@@ -359,13 +413,22 @@ export default function FramerSlick(props) {
                     >
                         <img
                             src={
-                                nextIconProperties?.hoverIcon
-                                    ? nextIconProperties?.hoverIcon
-                                    : nextIconProperties?.icon
+                                (nextIconProperties?.hoverIcon &&
+                                    nextIconProperties?.hoverIcon) ||
+                                nextIconProperties?.icon
+                                    ? nextIconProperties?.icon
+                                    : "https://i.ibb.co/rMkqLVp/next.png"
                             }
                             className="hover-icon"
                         />
-                        <img src={nextIconProperties?.icon} />
+                        <img
+                            src={
+                                nextIconProperties?.icon
+                                    ? nextIconProperties?.icon
+                                    : "https://i.ibb.co/rMkqLVp/next.png"
+                            }
+                            loading="lazy"
+                        />
                     </div>
                 </div>
             </div>
@@ -396,6 +459,16 @@ addPropertyControls(FramerSlick, {
                     swipeToSlide: {
                         type: ControlType.Boolean,
                         defaultValue: true,
+                    },
+                    slidesToShow: {
+                        type: ControlType.Number,
+                        defaultValue: 1,
+                        displayStepper: true,
+                    },
+                    slidesToScroll: {
+                        type: ControlType.Number,
+                        defaultValue: 1,
+                        displayStepper: true,
                     },
                     autoPlaySpeed: {
                         type: ControlType.Number,
@@ -459,22 +532,18 @@ addPropertyControls(FramerSlick, {
                         defaultValue: false,
                     },
                     speed: { type: ControlType.Number, defaultValue: 500 },
-                    slidesToShow: { type: ControlType.Number, defaultValue: 1 },
-                    slidesToScroll: {
-                        type: ControlType.Number,
-                        defaultValue: 1,
-                    },
                 },
             },
             width: { type: ControlType.Number, defaultValue: 100, unit: "%" },
+            sliderGap: {
+                type: ControlType.Number,
+                defaultValue: 20,
+                displayStepper: true,
+            },
             dots: {
                 type: ControlType.Object,
                 controls: {
-                    color: { type: ControlType.Color, defaultValue: "blue" },
-                    hoverColor: {
-                        type: ControlType.Color,
-                        defaultValue: "purple",
-                    },
+                    color: { type: ControlType.Color, defaultValue: "black" },
                     size: { type: ControlType.Number, defaultValue: 20 },
                 },
                 hidden(props) {
@@ -505,6 +574,7 @@ addPropertyControls(FramerSlick, {
             row: {
                 type: ControlType.Number,
                 defaultValue: 1,
+                displayStepper: true,
                 hidden(props) {
                     return props?.multiRow === false
                 },
@@ -512,9 +582,263 @@ addPropertyControls(FramerSlick, {
             slidesPerRow: {
                 type: ControlType.Number,
                 defaultValue: 1,
+                displayStepper: true,
                 hidden(props) {
                     return props?.multiRow === false
                 },
+            },
+        },
+    },
+
+    arrowsSettings: {
+        type: ControlType.Object,
+        title: "Arrows Settings",
+        controls: {
+            prevIcon: {
+                type: ControlType.Object,
+                controls: {
+                    icon: {
+                        type: ControlType.Image,
+                        defaultValue: "https://i.ibb.co/KK9fbn2/prev.png",
+                    },
+                    hoverIcon: {
+                        type: ControlType.Image,
+                    },
+                    bgColor: {
+                        type: ControlType.Color,
+                        title: "Color",
+                        defaultValue: "transparent",
+                    },
+                    hoverBgColor: {
+                        type: ControlType.Color,
+                        title: "Hover Color",
+                        defaultValue: "transparent",
+                    },
+                    size: {
+                        type: ControlType.Number,
+                        defaultValue: 48,
+                        unit: "px",
+                    },
+                    borderSize: {
+                        type: ControlType.Number,
+                        defaultValue: 2,
+                        unit: "px",
+                    },
+                    borderColor: {
+                        type: ControlType.Color,
+                        defaultValue: "black",
+                    },
+                    borderRadius: {
+                        type: ControlType.Number,
+                        defaultValue: 24,
+                        unit: "px",
+                    },
+                    padding: {
+                        type: ControlType.FusedNumber,
+                        defaultValue: 0,
+                        toggleKey: "isPrevMixed",
+                        toggleTitles: ["All", "Individual"],
+                        valueKeys: [
+                            "prevTop",
+                            "prevRight",
+                            "prevBottom",
+                            "prevLeft",
+                        ],
+                        valueLabels: ["T", "R", "B", "L"],
+                        unit: "px",
+                    },
+                },
+            },
+            nextIcon: {
+                type: ControlType.Object,
+                controls: {
+                    icon: {
+                        type: ControlType.Image,
+                        defaultValue: "https://i.ibb.co/rMkqLVp/next.png",
+                    },
+                    hoverIcon: {
+                        type: ControlType.Image,
+                    },
+                    bgColor: {
+                        type: ControlType.Color,
+                        title: "Color",
+                        defaultValue: "transparent",
+                    },
+                    hoverBgColor: {
+                        type: ControlType.Color,
+                        title: "Hover Color",
+                        defaultValue: "transparent",
+                    },
+                    size: {
+                        type: ControlType.Number,
+                        defaultValue: 48,
+                        unit: "px",
+                    },
+                    borderSize: {
+                        type: ControlType.Number,
+                        defaultValue: 2,
+                        unit: "px",
+                    },
+                    borderColor: {
+                        type: ControlType.Color,
+                        defaultValue: "black",
+                    },
+                    borderRadius: {
+                        type: ControlType.Number,
+                        defaultValue: 24,
+                        unit: "px",
+                    },
+                    padding: {
+                        type: ControlType.FusedNumber,
+                        defaultValue: 0,
+                        toggleKey: "isNextMixed",
+                        toggleTitles: ["All", "Individual"],
+                        valueKeys: [
+                            "nextTop",
+                            "nextRight",
+                            "nextBottom",
+                            "nextLeft",
+                        ],
+                        valueLabels: ["T", "R", "B", "L"],
+                        unit: "px",
+                    },
+                },
+            },
+            direction: {
+                type: ControlType.Boolean,
+                defaultValue: false,
+                disabledTitle: "Bottom",
+                enabledTitle: "Top",
+                hidden(props) {
+                    return props.location === "Flexible"
+                },
+            },
+            location: {
+                type: ControlType.Enum,
+                title: "Location",
+                defaultValue: "center",
+                displaySegmentedControl: false,
+                segmentedControlDirection: "vertical",
+                optionTitles: [
+                    "Two Side",
+                    "Center",
+                    "Left",
+                    "Right",
+                    "Space Between",
+                    "Space Around",
+                    "Space Evenly",
+                    "Flexible",
+                ],
+                options: [
+                    "Two Side",
+                    "Center",
+                    "Left",
+                    "Right",
+                    "space-between",
+                    "space-around",
+                    "space-evenly",
+                    "Flexible",
+                ],
+            },
+            position: {
+                type: ControlType.Enum,
+                title: "Position",
+                defaultValue: "Bottom Center",
+                displaySegmentedControl: false,
+                segmentedControlDirection: "vertical",
+                optionTitles: [
+                    "Top Center",
+                    "Top Left",
+                    "Top Right",
+                    "Bottom Center",
+                    "Bottom Left",
+                    "Bottom Right",
+                    "Two Side",
+                ],
+                options: [
+                    "Top Center",
+                    "Top Left",
+                    "Top Right",
+                    "Bottom Center",
+                    "Bottom Left",
+                    "Bottom Right",
+                    "Two Side",
+                ],
+            },
+            top: {
+                title: "top",
+                type: ControlType.Number,
+                defaultValue: 0,
+                displayStepper: true,
+                hidden(props) {
+                    return (
+                        props.location === "Flexible" &&
+                        props.position.includes(`Bottom`)
+                    )
+                },
+            },
+            left: {
+                title: "left",
+                type: ControlType.Number,
+                defaultValue: 0,
+                displayStepper: true,
+                hidden(props) {
+                    return (
+                        props.location === "Flexible" &&
+                        props.position.includes("Right")
+                    )
+                },
+            },
+            bottom: {
+                title: "bottom",
+                type: ControlType.Number,
+                defaultValue: 0,
+                displayStepper: true,
+                hidden(props) {
+                    return (
+                        props.location === "Flexible" &&
+                        props.position.includes("Top")
+                    )
+                },
+            },
+            right: {
+                title: "right",
+                type: ControlType.Number,
+                defaultValue: 0,
+                displayStepper: true,
+                hidden(props) {
+                    return (
+                        (props.location === "Flexible" &&
+                            props.position.includes(`Left`)) ||
+                        props.position.includes(`Center`)
+                    )
+                },
+            },
+            gap: {
+                type: ControlType.Number,
+                defaultValue: 0,
+                unit: "px",
+            },
+            margin: {
+                type: ControlType.FusedNumber,
+                defaultValue: 0,
+                toggleKey: "isMixed",
+                toggleTitles: ["All", "Individual"],
+                valueKeys: ["Top", "Right", "Bottom", "Left"],
+                valueLabels: ["T", "R", "B", "L"],
+            },
+            padding: {
+                type: ControlType.FusedNumber,
+                defaultValue: 0,
+                toggleKey: "isPaddingMixed",
+                toggleTitles: ["All", "Individual"],
+                valueKeys: [
+                    "paddingTop",
+                    "paddingRight",
+                    "paddingBottom",
+                    "paddingLeft",
+                ],
+                valueLabels: ["T", "R", "B", "L"],
             },
         },
     },
@@ -630,192 +954,4 @@ addPropertyControls(FramerSlick, {
             return props?.AsNavFor === false
         },
     },
-    arrowsSettings: {
-        type: ControlType.Object,
-        title: "Arrows Settings",
-        controls: {
-            prevIcon: {
-                type: ControlType.Object,
-                controls: {
-                    icon: { type: ControlType.Image },
-                    hoverIcon: {
-                        type: ControlType.Image,
-                    },
-                    bgColor: {
-                        type: ControlType.Color,
-                        title: "Color",
-                        defaultValue: "transparent",
-                    },
-                    hoverBgColor: {
-                        type: ControlType.Color,
-                        title: "Hover Color",
-                        defaultValue: "transparent",
-                    },
-                    size: {
-                        type: ControlType.Number,
-                        defaultValue: 48,
-                        unit: "px",
-                    },
-                    borderRadius: {
-                        type: ControlType.Number,
-                        defaultValue: 24,
-                        unit: "px",
-                    },
-                    padding: {
-                        type: ControlType.FusedNumber,
-                        defaultValue: 0,
-                        toggleKey: "isPrevMixed",
-                        toggleTitles: ["All", "Individual"],
-                        valueKeys: [
-                            "prevTop",
-                            "prevRight",
-                            "prevBottom",
-                            "prevLeft",
-                        ],
-                        valueLabels: ["T", "R", "B", "L"],
-                        unit: "px",
-                    },
-                },
-            },
-            nextIcon: {
-                type: ControlType.Object,
-                controls: {
-                    icon: { type: ControlType.Image },
-                    hoverIcon: {
-                        type: ControlType.Image,
-                    },
-                    bgColor: {
-                        type: ControlType.Color,
-                        title: "Color",
-                        defaultValue: "transparent",
-                    },
-                    hoverBgColor: {
-                        type: ControlType.Color,
-                        title: "Hover Color",
-                        defaultValue: "transparent",
-                    },
-                    size: {
-                        type: ControlType.Number,
-                        defaultValue: 48,
-                        unit: "px",
-                    },
-                    borderRadius: {
-                        type: ControlType.Number,
-                        defaultValue: 24,
-                        unit: "px",
-                    },
-                    padding: {
-                        type: ControlType.FusedNumber,
-                        defaultValue: 0,
-                        toggleKey: "isNextMixed",
-                        toggleTitles: ["All", "Individual"],
-                        valueKeys: [
-                            "nextTop",
-                            "nextRight",
-                            "nextBottom",
-                            "nextLeft",
-                        ],
-                        valueLabels: ["T", "R", "B", "L"],
-                        unit: "px",
-                    },
-                },
-            },
-            direction: {
-                type: ControlType.Boolean,
-                defaultValue: false,
-                disabledTitle: "Bottom",
-                enabledTitle: "Top",
-            },
-            location: {
-                type: ControlType.Enum,
-                title: "Location",
-                defaultValue: "center",
-                displaySegmentedControl: false,
-                segmentedControlDirection: "vertical",
-                optionTitles: [
-                    "Two Side",
-                    "Center",
-                    "Left",
-                    "Right",
-                    "Space Between",
-                    "Space Around",
-                    "Space Evenly",
-                    "Flexible",
-                ],
-                options: [
-                    "Two Side",
-                    "Center",
-                    "Left",
-                    "Right",
-                    "space-between",
-                    "space-around",
-                    "space-evenly",
-                    "Flexible",
-                ],
-            },
-            gap: {
-                type: ControlType.Number,
-                defaultValue: 0,
-                unit: "px",
-            },
-            margin: {
-                type: ControlType.FusedNumber,
-                defaultValue: 0,
-                toggleKey: "isMixed",
-                toggleTitles: ["All", "Individual"],
-                valueKeys: ["Top", "Right", "Bottom", "Left"],
-                valueLabels: ["T", "R", "B", "L"],
-            },
-            padding: {
-                type: ControlType.FusedNumber,
-                defaultValue: 0,
-                toggleKey: "isPaddingMixed",
-                toggleTitles: ["All", "Individual"],
-                valueKeys: [
-                    "paddingTop",
-                    "paddingRight",
-                    "paddingBottom",
-                    "paddingLeft",
-                ],
-                valueLabels: ["T", "R", "B", "L"],
-            },
-            top: {
-                title: "top",
-                type: ControlType.Number,
-                defaultValue: 0,
-                displayStepper: true,
-                hidden(props) {
-                    return props.location !== "Flexible"
-                },
-            },
-            left: {
-                title: "left",
-                type: ControlType.Number,
-                defaultValue: 0,
-                displayStepper: true,
-                hidden(props) {
-                    return props.location !== "Flexible"
-                },
-            },
-            bottom: {
-                title: "bottom",
-                type: ControlType.Number,
-                defaultValue: 0,
-                displayStepper: true,
-                hidden(props) {
-                    return props.location !== "Flexible"
-                },
-            },
-            right: {
-                title: "right",
-                type: ControlType.Number,
-                defaultValue: 0,
-                displayStepper: true,
-                hidden(props) {
-                    return props.location !== "Flexible"
-                },
-            },
-        },
-    },
 })
-
