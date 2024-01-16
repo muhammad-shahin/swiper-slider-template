@@ -105,6 +105,7 @@ export default function FramerSlick(props) {
     const arrowRightID = crypto.randomUUID()
     function generateCSS() {
         const css = `
+
                 .slider-1-${primarySliderID} > .slick-slider > .slick-list > .slick-track > .slick-slide{
                     padding:0px ${props?.PrimarySliderSettings?.sliderGap}px;
                 }
@@ -115,7 +116,7 @@ export default function FramerSlick(props) {
                     width: ${props?.PrimarySliderSettings?.width}% !important;
                 }
                  .slides-2-${slides2ID} > div{
-                    width: ${props?.SecondarySliderSettings?.width}% !important;
+                    width: 100% !important;
                 }
                  .secondary-slider-${slides2ID} {
                     position: static;
@@ -180,6 +181,7 @@ export default function FramerSlick(props) {
                             `bottom: ${props?.arrowsSettings?.bottom}px;
                             right: ${props?.arrowsSettings?.right}px;`) ||
                         (props?.arrowsSettings?.position === "Bottom Center" &&
+                            props?.arrowsSettings?.location === "Flexible" &&
                             `bottom: ${props?.arrowsSettings?.bottom}px;
                             left: ${
                                 props?.arrowsSettings?.left > 0
@@ -256,6 +258,15 @@ export default function FramerSlick(props) {
                 .slider-1-${primarySliderID} > .slick-slider > .slick-dots > li.slick-active > button:before{
                     color: ${props?.dots?.activeColor};
                 }
+                .slider-1-${primarySliderID} {
+                    width: ${
+                        slider2Position === "Top" ||
+                        slider2Position === "Bottom" ||
+                        props?.AsNavFor !== true
+                            ? "100%"
+                            : `calc(100% - ${props?.SecondarySliderSettings?.width}%)`
+                    };
+                }
                 .sample-slides{
                     padding: 80px;
                     text-align: center;
@@ -288,14 +299,18 @@ export default function FramerSlick(props) {
                             (slider2Position === "Left" && "row-reverse") ||
                             (slider2Position === "Bottom" && "column") ||
                             (slider2Position === "Top" && "column-reverse"),
-                        gap: `${props?.Gap}px`,
+                        gap: `${props?.Gap}%`,
                         justifyContent: "center",
                         padding: `0 ${
-                            props?.arrowsSettings?.location === "Two Side"
+                            props?.arrowsSettings?.location === "Two Side" &&
+                            props?.arrowsSettings?.toggleArrow === true &&
+                            prevIconProperties?.icon
                                 ? nextIconProperties?.size + 8
                                 : 0
                         }px 0 ${
-                            props?.arrowsSettings?.location === "Two Side"
+                            props?.arrowsSettings?.location === "Two Side" &&
+                            props?.arrowsSettings?.toggleArrow === true &&
+                            nextIconProperties?.icon
                                 ? prevIconProperties?.size + 8
                                 : 0
                         }px`,
@@ -323,6 +338,7 @@ export default function FramerSlick(props) {
                             {props?.PrimarySlides?.length > 0
                                 ? props?.PrimarySlides?.map((slide) => (
                                       <div className={`slides-1-${slides1ID}`}>
+                                          {console.log(slide)}
                                           {slide}
                                       </div>
                                   ))
@@ -337,13 +353,13 @@ export default function FramerSlick(props) {
                         </Component>
                     </div>
                     <div
-                        className="slider-2s"
+                        className="slider-2"
                         style={{
                             width:
                                 slider2Position === "Top" ||
                                 slider2Position === "Bottom"
                                     ? "100%"
-                                    : "30%",
+                                    : `${props?.SecondarySliderSettings?.width}%`,
                             display: props?.AsNavFor ? "block" : "none",
                             height: "auto",
                             margin: "auto 0",
@@ -370,6 +386,7 @@ export default function FramerSlick(props) {
                             {props?.SecondarySlides?.length > 0 ? (
                                 props?.SecondarySlides?.map((slide) => (
                                     <div className={`slides-2-${slides2ID}`}>
+                                        {console.log(slide)}
                                         {slide}
                                     </div>
                                 ))
@@ -434,9 +451,8 @@ export default function FramerSlick(props) {
                         />
                         <img
                             src={
+                                prevIconProperties?.icon &&
                                 prevIconProperties?.icon
-                                    ? prevIconProperties?.icon
-                                    : "https://i.ibb.co/KK9fbn2/prev.png"
                             }
                             loading="lazy"
                         />
@@ -468,9 +484,8 @@ export default function FramerSlick(props) {
                         />
                         <img
                             src={
+                                nextIconProperties?.icon &&
                                 nextIconProperties?.icon
-                                    ? nextIconProperties?.icon
-                                    : "https://i.ibb.co/rMkqLVp/next.png"
                             }
                             loading="lazy"
                         />
@@ -730,7 +745,7 @@ addPropertyControls(FramerSlick, {
                     },
                     borderColor: {
                         type: ControlType.Color,
-                        defaultValue: "black",
+                        defaultValue: "transparent",
                     },
                     borderHoverColor: {
                         type: ControlType.Color,
@@ -791,7 +806,7 @@ addPropertyControls(FramerSlick, {
                     },
                     borderColor: {
                         type: ControlType.Color,
-                        defaultValue: "black",
+                        defaultValue: "transparent",
                     },
                     borderHoverColor: {
                         type: ControlType.Color,
@@ -998,6 +1013,7 @@ addPropertyControls(FramerSlick, {
         type: ControlType.Number,
         title: "Gap",
         defaultValue: 0,
+        unit: "%",
         hidden(props) {
             return props?.AsNavFor === false
         },
@@ -1017,7 +1033,7 @@ addPropertyControls(FramerSlick, {
         title: "Settings",
         description: "Settings for Nav Slides",
         controls: {
-            width: { type: ControlType.Number, defaultValue: 100, unit: "%" },
+            width: { type: ControlType.Number, defaultValue: 30, unit: "%" },
             SecondarySliderPosition: {
                 type: ControlType.Enum,
                 title: "Position",
