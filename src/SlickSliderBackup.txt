@@ -101,6 +101,8 @@ export default function FramerSlick(props) {
     const slides2ID = crypto.randomUUID()
     const primarySliderID = crypto.randomUUID()
     const arrowBlockID = crypto.randomUUID()
+    const arrowLeftID = crypto.randomUUID()
+    const arrowRightID = crypto.randomUUID()
     function generateCSS() {
         const css = `
                 .slider-1-${primarySliderID} > .slick-slider > .slick-list > .slick-track > .slick-slide{
@@ -195,32 +197,50 @@ export default function FramerSlick(props) {
                             left: ${props?.arrowsSettings?.left}px;`)
                     }
                 }
-                .arrow-left, .arrow-right{
+                .arrow-left-${arrowLeftID}, .arrow-right-${arrowRightID}{
                     display: flex;
                     justify-content: center;
                     align-items: center;
                     transition: all 0.3s linear;
                 }
-                .arrow-left > img, .arrow-right > img{
+                .arrow-left-${arrowLeftID} > img, .arrow-right-${arrowRightID} > img{
                     max-width: 100%;
                 }
-                .arrow-left > img.hover-icon, .arrow-right > img.hover-icon{
-                    display:none
-                }
-                .arrow-left:hover{
-                    background-color: ${prevIconProperties?.hoverBgColor};
+                .arrow-left-${arrowLeftID}:hover {
+                    background-color: ${prevIconProperties?.hoverBgColor} !important;
                     transition: all 0.3s linear;
+                    border-color: ${prevIconProperties?.borderHoverColor} !important;
                 }
-                .arrow-right:hover{
-                    background-color: ${nextIconProperties?.hoverBgColor};
+                .arrow-right-${arrowRightID}:hover {
+                    background-color: ${nextIconProperties?.hoverBgColor} !important;
                     transition: all 0.3s linear;
+                    border-color: ${nextIconProperties?.borderHoverColor} !important;
                 }
-                
+                .arrow-left-${arrowLeftID} > img.hover-icon, .arrow-right-${arrowRightID} > img.hover-icon{
+                    display:none !important;
+                }
                 .arrow:hover img:not(.hover-icon){
-                    display:none;
+                    display:none !important;
                 }
                 .arrow:hover .hover-icon{
-                    display:block;
+                    display:block !important;
+                }
+                .slider-1-${primarySliderID} > .slick-slider > .slick-dots {
+                    text-align: ${props?.PrimarySliderSettings?.dots
+                        ?.position} !important;
+                    margin: ${
+                        props?.PrimarySliderSettings?.dots?.isDotsMixed
+                            ? props?.PrimarySliderSettings?.dots?.dotsTop +
+                              "px " +
+                              props?.PrimarySliderSettings?.dots?.dotsRight +
+                              "px " +
+                              props?.PrimarySliderSettings?.dots?.dotsBottom +
+                              "px " +
+                              props?.PrimarySliderSettings?.dots?.dotsLeft +
+                              "px"
+                            : props?.PrimarySliderSettings?.dots?.margin + "px"
+                    } !important; 
+                    bottom: 0 !important;  
                 }
                 .slider-1-${primarySliderID} > .slick-slider > .slick-dots > li > button:before{
                     color: ${props?.PrimarySliderSettings?.dots?.color};
@@ -228,7 +248,7 @@ export default function FramerSlick(props) {
                         ?.size}px !important;
                 }
                 .slider-1-${primarySliderID} > .slick-slider > .slick-dots > li.slick-active > button:before{
-                    color: ${props?.PrimarySliderSettings?.dots?.color};
+                    color: ${props?.PrimarySliderSettings?.dots?.activeColor};
                 }
                 .sample-slides{
                     padding: 80px;
@@ -242,7 +262,7 @@ export default function FramerSlick(props) {
 `
         return css
     }
-    console.log(prevIconProperties?.icon)
+    console.log(props?.PrimarySliderSettings?.dots)
     return (
         <>
             <style>{generateCSS()}</style>
@@ -358,7 +378,7 @@ export default function FramerSlick(props) {
                         position: arrowBlockPosition,
                         height: "fit-content",
                         zIndex: 500,
-                        display: "flex",
+                        display: `${props?.toggleArrow ? "flex" : "none"}`,
                         gap: `${props?.arrowsSettings?.gap}px`,
                         justifyContent: arrowsCornerLocation,
                         pointerEvents: "auto",
@@ -371,7 +391,8 @@ export default function FramerSlick(props) {
                         marginTop: `${
                             props?.arrowsSettings?.location !== "Two Side" &&
                             !arrowBlockPaddingMargin.Top &&
-                            !arrowBlockPaddingMargin.margin
+                            !arrowBlockPaddingMargin.margin &&
+                            props?.arrowsSettings?.location !== "Flexible"
                                 ? "20px"
                                 : arrowBlockPaddingMargin.Top ||
                                   arrowBlockPaddingMargin.margin
@@ -379,7 +400,7 @@ export default function FramerSlick(props) {
                     }}
                 >
                     <div
-                        className="arrow arrow-left"
+                        className={`arrow arrow-left-${arrowLeftID} test-hover`}
                         style={{
                             width: `${prevIconProperties?.size}px`,
                             height: `${prevIconProperties?.size}px`,
@@ -415,7 +436,7 @@ export default function FramerSlick(props) {
                         />
                     </div>
                     <div
-                        className="arrow arrow-right"
+                        className={`arrow arrow-right-${arrowRightID} test-hover`}
                         style={{
                             width: `${nextIconProperties?.size}px`,
                             height: `${nextIconProperties?.size}px`,
@@ -564,7 +585,50 @@ addPropertyControls(FramerSlick, {
                 type: ControlType.Object,
                 controls: {
                     color: { type: ControlType.Color, defaultValue: "black" },
+                    activeColor: {
+                        type: ControlType.Color,
+                        defaultValue: "black",
+                    },
                     size: { type: ControlType.Number, defaultValue: 20 },
+                    margin: {
+                        type: ControlType.FusedNumber,
+                        defaultValue: 0,
+                        toggleKey: "isDotsMixed",
+                        toggleTitles: ["All", "Individual"],
+                        valueKeys: [
+                            "dotsTop",
+                            "dotsRight",
+                            "dotsBottom",
+                            "dotsLeft",
+                        ],
+                        valueLabels: ["T", "R", "B", "L"],
+                        unit: "px",
+                    },
+                    alignUpDown: {
+                        title: "Up-Down",
+                        description:
+                            "To move Up use '+' value for Down use '-' value",
+                        type: ControlType?.Number,
+                        displayStepper: true,
+                        defaultValue: 0,
+                    },
+                    alignLeftRight: {
+                        title: "Left-Right",
+                        description:
+                            "To move Right use '+' value for Left use '-' value",
+                        type: ControlType?.Number,
+                        displayStepper: true,
+                        defaultValue: 0,
+                    },
+                    position: {
+                        type: ControlType.Enum,
+                        title: "Location",
+                        defaultValue: "center",
+                        displaySegmentedControl: false,
+                        segmentedControlDirection: "vertical",
+                        optionTitles: ["Center", "Left", "Right"],
+                        options: ["center", "left", "right"],
+                    },
                 },
                 hidden(props) {
                     return props?.settings?.dots === false
@@ -609,7 +673,12 @@ addPropertyControls(FramerSlick, {
             },
         },
     },
-
+    toggleArrow: {
+        type: ControlType.Boolean,
+        defaultValue: false,
+        disabledTitle: "Hide",
+        enabledTitle: "Show",
+    },
     arrowsSettings: {
         type: ControlType.Object,
         title: "Arrows Settings",
@@ -632,7 +701,6 @@ addPropertyControls(FramerSlick, {
                     hoverBgColor: {
                         type: ControlType.Color,
                         title: "Hover Color",
-                        defaultValue: "transparent",
                     },
                     size: {
                         type: ControlType.Number,
@@ -647,6 +715,10 @@ addPropertyControls(FramerSlick, {
                     borderColor: {
                         type: ControlType.Color,
                         defaultValue: "black",
+                    },
+                    borderHoverColor: {
+                        type: ControlType.Color,
+                        defaultValue: "transparent",
                     },
                     borderRadius: {
                         type: ControlType.Number,
@@ -687,7 +759,6 @@ addPropertyControls(FramerSlick, {
                     hoverBgColor: {
                         type: ControlType.Color,
                         title: "Hover Color",
-                        defaultValue: "transparent",
                     },
                     size: {
                         type: ControlType.Number,
@@ -702,6 +773,10 @@ addPropertyControls(FramerSlick, {
                     borderColor: {
                         type: ControlType.Color,
                         defaultValue: "black",
+                    },
+                    borderHoverColor: {
+                        type: ControlType.Color,
+                        defaultValue: "transparent",
                     },
                     borderRadius: {
                         type: ControlType.Number,
@@ -860,6 +935,9 @@ addPropertyControls(FramerSlick, {
                 ],
                 valueLabels: ["T", "R", "B", "L"],
             },
+        },
+        hidden(props) {
+            return props?.toggleArrow === false
         },
     },
     AsNavFor: {
