@@ -149,6 +149,11 @@ export default function FramerSlick(props) {
                     display: none !important;
                 }
                 .arrow-block-${arrowBlockID}{
+                    display: ${
+                        props?.arrowsSettings?.toggleArrow === true
+                            ? "flex !important;"
+                            : "none !important;"
+                    }
                     ${
                         (props?.arrowsSettings?.position === "Top Left" &&
                             `top: ${props?.arrowsSettings?.top}px;
@@ -187,7 +192,7 @@ export default function FramerSlick(props) {
                                     : 50
                             }%);`) ||
                         (props?.arrowsSettings?.position === "Two Side" &&
-                            `justify-content : space-between !important;
+                            `justify-content: space-between !important;
                             width: 100%;
                             top: ${
                                 props?.arrowsSettings?.top > 0
@@ -195,6 +200,19 @@ export default function FramerSlick(props) {
                                     : 50
                             }%;
                             left: ${props?.arrowsSettings?.left}px;`)
+                    }
+                    ${
+                        props?.arrowsSettings?.location === "Two Side" &&
+                        `
+                            justify-content: space-between !important;
+                            width: 100%;
+                            top: ${
+                                props?.arrowsSettings?.top > 0
+                                    ? props?.arrowsSettings?.top
+                                    : 50
+                            }%;
+                            left: ${props?.arrowsSettings?.left}px;
+                    `
                     }
                 }
                 .arrow-left-${arrowLeftID}, .arrow-right-${arrowRightID}{
@@ -226,29 +244,17 @@ export default function FramerSlick(props) {
                     display:block !important;
                 }
                 .slider-1-${primarySliderID} > .slick-slider > .slick-dots {
-                    text-align: ${props?.PrimarySliderSettings?.dots
-                        ?.position} !important;
-                    margin: ${
-                        props?.PrimarySliderSettings?.dots?.isDotsMixed
-                            ? props?.PrimarySliderSettings?.dots?.dotsTop +
-                              "px " +
-                              props?.PrimarySliderSettings?.dots?.dotsRight +
-                              "px " +
-                              props?.PrimarySliderSettings?.dots?.dotsBottom +
-                              "px " +
-                              props?.PrimarySliderSettings?.dots?.dotsLeft +
-                              "px"
-                            : props?.PrimarySliderSettings?.dots?.margin + "px"
-                    } !important; 
+                    text-align: ${props?.dots?.position} !important;
+                    margin-bottom: ${props?.dots?.alignUpDown}px !important; 
+                    margin-left: ${props?.dots?.alignLeftRight}px !important; 
                     bottom: 0 !important;  
                 }
                 .slider-1-${primarySliderID} > .slick-slider > .slick-dots > li > button:before{
-                    color: ${props?.PrimarySliderSettings?.dots?.color};
-                    font-size: ${props?.PrimarySliderSettings?.dots
-                        ?.size}px !important;
+                    color: ${props?.dots?.color};
+                    font-size: ${props?.dots?.size}px !important;
                 }
                 .slider-1-${primarySliderID} > .slick-slider > .slick-dots > li.slick-active > button:before{
-                    color: ${props?.PrimarySliderSettings?.dots?.activeColor};
+                    color: ${props?.dots?.activeColor};
                 }
                 .sample-slides{
                     padding: 80px;
@@ -262,7 +268,6 @@ export default function FramerSlick(props) {
 `
         return css
     }
-    console.log(props?.PrimarySliderSettings?.dots)
     return (
         <>
             <style>{generateCSS()}</style>
@@ -286,11 +291,13 @@ export default function FramerSlick(props) {
                         gap: `${props?.Gap}px`,
                         justifyContent: "center",
                         padding: `0 ${
-                            props?.arrowsSettings?.location === "Two Side" &&
-                            nextIconProperties?.size + 8
+                            props?.arrowsSettings?.location === "Two Side"
+                                ? nextIconProperties?.size + 8
+                                : 0
                         }px 0 ${
-                            props?.arrowsSettings?.location === "Two Side" &&
-                            prevIconProperties?.size + 8
+                            props?.arrowsSettings?.location === "Two Side"
+                                ? prevIconProperties?.size + 8
+                                : 0
                         }px`,
                     }}
                 >
@@ -309,6 +316,7 @@ export default function FramerSlick(props) {
                         <Component
                             {...props?.PrimarySliderSettings?.settings}
                             {...multiRowSliderSettings}
+                            dots={props?.dots?.dotsEnable}
                             ref={nav1}
                             asNavFor={slider2}
                         >
@@ -378,7 +386,7 @@ export default function FramerSlick(props) {
                         position: arrowBlockPosition,
                         height: "fit-content",
                         zIndex: 500,
-                        display: `${props?.toggleArrow ? "flex" : "none"}`,
+                        display: "flex",
                         gap: `${props?.arrowsSettings?.gap}px`,
                         justifyContent: arrowsCornerLocation,
                         pointerEvents: "auto",
@@ -400,7 +408,7 @@ export default function FramerSlick(props) {
                     }}
                 >
                     <div
-                        className={`arrow arrow-left-${arrowLeftID} test-hover`}
+                        className={`arrow arrow-left-${arrowLeftID}`}
                         style={{
                             width: `${prevIconProperties?.size}px`,
                             height: `${prevIconProperties?.size}px`,
@@ -418,11 +426,9 @@ export default function FramerSlick(props) {
                     >
                         <img
                             src={
-                                (prevIconProperties?.hoverIcon &&
-                                    prevIconProperties?.hoverIcon) ||
-                                prevIconProperties?.icon
-                                    ? prevIconProperties?.icon
-                                    : "https://i.ibb.co/KK9fbn2/prev.png"
+                                prevIconProperties?.hoverIcon
+                                    ? prevIconProperties?.hoverIcon
+                                    : prevIconProperties?.icon
                             }
                             className="hover-icon"
                         />
@@ -454,11 +460,9 @@ export default function FramerSlick(props) {
                     >
                         <img
                             src={
-                                (nextIconProperties?.hoverIcon &&
-                                    nextIconProperties?.hoverIcon) ||
-                                nextIconProperties?.icon
-                                    ? nextIconProperties?.icon
-                                    : "https://i.ibb.co/rMkqLVp/next.png"
+                                nextIconProperties?.hoverIcon
+                                    ? nextIconProperties?.hoverIcon
+                                    : nextIconProperties?.icon
                             }
                             className="hover-icon"
                         />
@@ -494,7 +498,6 @@ addPropertyControls(FramerSlick, {
             settings: {
                 type: ControlType.Object,
                 controls: {
-                    dots: { type: ControlType.Boolean, defaultValue: true },
                     infinite: { type: ControlType.Boolean, defaultValue: true },
                     autoplay: { type: ControlType.Boolean, defaultValue: true },
                     swipeToSlide: {
@@ -581,59 +584,6 @@ addPropertyControls(FramerSlick, {
                 defaultValue: 20,
                 displayStepper: true,
             },
-            dots: {
-                type: ControlType.Object,
-                controls: {
-                    color: { type: ControlType.Color, defaultValue: "black" },
-                    activeColor: {
-                        type: ControlType.Color,
-                        defaultValue: "black",
-                    },
-                    size: { type: ControlType.Number, defaultValue: 20 },
-                    margin: {
-                        type: ControlType.FusedNumber,
-                        defaultValue: 0,
-                        toggleKey: "isDotsMixed",
-                        toggleTitles: ["All", "Individual"],
-                        valueKeys: [
-                            "dotsTop",
-                            "dotsRight",
-                            "dotsBottom",
-                            "dotsLeft",
-                        ],
-                        valueLabels: ["T", "R", "B", "L"],
-                        unit: "px",
-                    },
-                    alignUpDown: {
-                        title: "Up-Down",
-                        description:
-                            "To move Up use '+' value for Down use '-' value",
-                        type: ControlType?.Number,
-                        displayStepper: true,
-                        defaultValue: 0,
-                    },
-                    alignLeftRight: {
-                        title: "Left-Right",
-                        description:
-                            "To move Right use '+' value for Left use '-' value",
-                        type: ControlType?.Number,
-                        displayStepper: true,
-                        defaultValue: 0,
-                    },
-                    position: {
-                        type: ControlType.Enum,
-                        title: "Location",
-                        defaultValue: "center",
-                        displaySegmentedControl: false,
-                        segmentedControlDirection: "vertical",
-                        optionTitles: ["Center", "Left", "Right"],
-                        options: ["center", "left", "right"],
-                    },
-                },
-                hidden(props) {
-                    return props?.settings?.dots === false
-                },
-            },
             multiRow: {
                 type: ControlType.Boolean,
                 defaultValue: false,
@@ -673,16 +623,82 @@ addPropertyControls(FramerSlick, {
             },
         },
     },
-    toggleArrow: {
-        type: ControlType.Boolean,
-        defaultValue: false,
-        disabledTitle: "Hide",
-        enabledTitle: "Show",
+    dots: {
+        type: ControlType.Object,
+        controls: {
+            dotsEnable: { type: ControlType.Boolean, defaultValue: true },
+            color: {
+                type: ControlType.Color,
+                defaultValue: "black",
+                hidden(props) {
+                    return props?.dotsEnable === false
+                },
+            },
+            activeColor: {
+                type: ControlType.Color,
+                defaultValue: "black",
+                hidden(props) {
+                    return props?.dotsEnable === false
+                },
+            },
+            size: {
+                type: ControlType.Number,
+                defaultValue: 20,
+                hidden(props) {
+                    return props?.dotsEnable === false
+                },
+            },
+            alignUpDown: {
+                title: "Up-Down",
+                description: "To move Up use '+' value for Down use '-' value",
+                type: ControlType?.Number,
+                displayStepper: true,
+                defaultValue: 0,
+                unit: "px",
+                hidden(props) {
+                    return props?.dotsEnable === false
+                },
+            },
+            alignLeftRight: {
+                title: "Left-Right",
+                description:
+                    "To move Right use '+' value for Left use '-' value",
+                type: ControlType?.Number,
+                displayStepper: true,
+                defaultValue: 0,
+                unit: "px",
+                hidden(props) {
+                    return props?.dotsEnable === false
+                },
+            },
+            position: {
+                type: ControlType.Enum,
+                title: "Location",
+                defaultValue: "center",
+                displaySegmentedControl: false,
+                segmentedControlDirection: "vertical",
+                optionTitles: ["Center", "Left", "Right"],
+                options: ["center", "left", "right"],
+                hidden(props) {
+                    return props?.dotsEnable === false
+                },
+            },
+        },
+        hidden(props) {
+            return props?.settings?.dots === false
+        },
     },
     arrowsSettings: {
         type: ControlType.Object,
         title: "Arrows Settings",
         controls: {
+            toggleArrow: {
+                title: "Arrow",
+                type: ControlType.Boolean,
+                defaultValue: false,
+                disabledTitle: "Hide",
+                enabledTitle: "Show",
+            },
             prevIcon: {
                 type: ControlType.Object,
                 controls: {
@@ -739,6 +755,9 @@ addPropertyControls(FramerSlick, {
                         valueLabels: ["T", "R", "B", "L"],
                         unit: "px",
                     },
+                },
+                hidden(props) {
+                    return props?.toggleArrow === false
                 },
             },
             nextIcon: {
@@ -798,6 +817,9 @@ addPropertyControls(FramerSlick, {
                         unit: "px",
                     },
                 },
+                hidden(props) {
+                    return props?.toggleArrow === false
+                },
             },
             direction: {
                 type: ControlType.Boolean,
@@ -805,7 +827,11 @@ addPropertyControls(FramerSlick, {
                 disabledTitle: "Bottom",
                 enabledTitle: "Top",
                 hidden(props) {
-                    return props.location === "Flexible"
+                    return (
+                        props?.toggleArrow === false ||
+                        props.location === "Flexible" ||
+                        props.location === "Two Side"
+                    )
                 },
             },
             location: {
@@ -834,6 +860,9 @@ addPropertyControls(FramerSlick, {
                     "space-evenly",
                     "Flexible",
                 ],
+                hidden(props) {
+                    return props?.toggleArrow === false
+                },
             },
             position: {
                 type: ControlType.Enum,
@@ -859,6 +888,12 @@ addPropertyControls(FramerSlick, {
                     "Bottom Right",
                     "Two Side",
                 ],
+                hidden(props) {
+                    return (
+                        props?.toggleArrow === false ||
+                        props.location !== "Flexible"
+                    )
+                },
             },
             top: {
                 title: "top",
@@ -867,8 +902,9 @@ addPropertyControls(FramerSlick, {
                 displayStepper: true,
                 hidden(props) {
                     return (
-                        props.location === "Flexible" &&
-                        props.position.includes(`Bottom`)
+                        (props.location === "Flexible" &&
+                            props.position.includes(`Bottom`)) ||
+                        props.location !== "Flexible"
                     )
                 },
             },
@@ -879,8 +915,9 @@ addPropertyControls(FramerSlick, {
                 displayStepper: true,
                 hidden(props) {
                     return (
-                        props.location === "Flexible" &&
-                        props.position.includes("Right")
+                        (props.location === "Flexible" &&
+                            props.position.includes("Right")) ||
+                        props.location !== "Flexible"
                     )
                 },
             },
@@ -891,8 +928,9 @@ addPropertyControls(FramerSlick, {
                 displayStepper: true,
                 hidden(props) {
                     return (
-                        props.location === "Flexible" &&
-                        props.position.includes("Top")
+                        (props.location === "Flexible" &&
+                            props.position.includes("Top")) ||
+                        props.location !== "Flexible"
                     )
                 },
             },
@@ -905,7 +943,8 @@ addPropertyControls(FramerSlick, {
                     return (
                         (props.location === "Flexible" &&
                             props.position.includes(`Left`)) ||
-                        props.position.includes(`Center`)
+                        props.position.includes(`Center`) ||
+                        props.location !== "Flexible"
                     )
                 },
             },
@@ -913,6 +952,9 @@ addPropertyControls(FramerSlick, {
                 type: ControlType.Number,
                 defaultValue: 0,
                 unit: "px",
+                hidden(props) {
+                    return props?.toggleArrow === false
+                },
             },
             margin: {
                 type: ControlType.FusedNumber,
@@ -921,6 +963,9 @@ addPropertyControls(FramerSlick, {
                 toggleTitles: ["All", "Individual"],
                 valueKeys: ["Top", "Right", "Bottom", "Left"],
                 valueLabels: ["T", "R", "B", "L"],
+                hidden(props) {
+                    return props?.toggleArrow === false
+                },
             },
             padding: {
                 type: ControlType.FusedNumber,
@@ -934,6 +979,9 @@ addPropertyControls(FramerSlick, {
                     "paddingLeft",
                 ],
                 valueLabels: ["T", "R", "B", "L"],
+                hidden(props) {
+                    return props?.toggleArrow === false
+                },
             },
         },
         hidden(props) {
