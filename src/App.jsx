@@ -1,6 +1,9 @@
-import { Swiper, SwiperSlide } from 'swiper/react';
+// import Swiper from 'swiper/react/swiper';
 import { IoIosArrowRoundForward } from 'react-icons/io';
 import PropTypes from 'prop-types';
+import { useEffect, useMemo, useRef } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+
 
 // Import Swiper styles
 import 'swiper/css';
@@ -10,7 +13,6 @@ import 'swiper/css/autoplay';
 import 'swiper/css/effect-fade';
 
 import { EffectCards, Navigation, Autoplay, EffectFade } from 'swiper/modules';
-import { useEffect, useMemo, useRef, useState } from 'react';
 
 const App = ({ sliderData }) => {
   let currentWindowWidth = window.innerWidth;
